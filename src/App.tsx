@@ -25,7 +25,7 @@ import {
   ListItemText,
   ListItemSecondaryAction,
   Popover,
-  Box,
+  Box
 } from "@material-ui/core";
 import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
 import { CustomSwitch } from "./components/CustomSwitch";
@@ -169,6 +169,30 @@ const App: React.FC = () => {
               </a>{" "}
               din România.
             </Typography>
+            <Typography variant="body2" component="p" style={{ marginTop: 6 }}>
+              Poți explora harta prin hover și click pe punctele afișate, și
+              prin selecția categoriilor de furnizori medicali pe care dorești
+              să îi afișezi. Datele sunt preluate pentru Municipiul București{" "}
+              <a
+                href="http://www.cnas.ro/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                de pe site-ul CNAS
+              </a>
+              .
+            </Typography>
+            <Typography variant="body2" component="p" style={{ marginTop: 6 }}>
+              Adițional, pentru fiecare furnizor afișat,{" "}
+              <a
+                href="https://github.com/civicnet/cancer-atlas-scripts"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                am generat coordonatele GPS
+              </a>{" "}
+              pentru afișarea pe hartă.
+            </Typography>
             <List className={classes.filterList}>
               {Object.values(ServiceType).map(file => {
                 const ServiceSwitch = CustomSwitch(ServiceTypeColorMap[file]);
@@ -202,7 +226,12 @@ const App: React.FC = () => {
             </List>
           </CardContent>
           <CardActions>
-            <Button size="small">Cod sursă</Button>
+            <Button
+              size="small"
+              href="https://github.com/civicnet/cancer-atlas"
+            >
+              Cod sursă
+            </Button>
             <PopupState variant="popover" popupId="demo-popup-popover">
               {popupState => (
                 <div>
@@ -246,22 +275,36 @@ const App: React.FC = () => {
                           rel="noopener noreferrer"
                         >
                           Asociația Sănătate pentru Comunitate
-                        </a>.
+                        </a>
+                        .
                       </Typography>
-                      <Typography variant="body2" component="p" style={{ marginTop: 6 }}>
+                      <Typography
+                        variant="body2"
+                        component="p"
+                        style={{ marginTop: 6 }}
+                      >
                         Ne propunem să dezvoltăm prima aplicație dedicată
                         pacienților de cancer pulmonar din România,
                         navigatorilor acestora, dar și personalului medical.
                       </Typography>
-                      <Typography variant="body2" component="p" style={{ marginTop: 6 }}>
+                      <Typography
+                        variant="body2"
+                        component="p"
+                        style={{ marginTop: 6 }}
+                      >
                         Aplicația va conține informații importante despre
                         traseul pacienților, de la diagnosticare până la
                         îngrijire paliativă, și informații sub formă de ghiduri
                         pentru pacienți.
                       </Typography>
-                      <Typography variant="body2" component="p" style={{ marginTop: 6 }}>
-                        În momentul de față, aplicația se află în stadiul de prototip interactiv. 
-                        Ne puteți urmări pe Facebook pentru a fi la curent cu ultimele noutăți.
+                      <Typography
+                        variant="body2"
+                        component="p"
+                        style={{ marginTop: 6 }}
+                      >
+                        În momentul de față, aplicația se află în stadiul de
+                        prototip interactiv. Ne puteți urmări pe Facebook pentru
+                        a fi la curent cu ultimele noutăți.
                       </Typography>
                     </Box>
                   </Popover>
