@@ -102,7 +102,12 @@ const useStyles = makeStyles(theme => ({
 const App: React.FC = () => {
   const classes = useStyles();
 
-  const [checked, setChecked] = React.useState([ServiceType.FamilyMedicine]);
+  const [checked, setChecked] = React.useState([
+    ServiceType.FamilyMedicine,
+    ServiceType.HomeCare,
+    ServiceType.Imaging,
+    ServiceType.Laboratory
+  ]);
   const [tooltip, setTooltip] = React.useState();
   const [pinnedTooltip, setPinnedTooltip] = React.useState();
 
@@ -283,9 +288,12 @@ const App: React.FC = () => {
                         component="p"
                         style={{ marginTop: 6 }}
                       >
-                        Ne propunem să dezvoltăm <strong>prima aplicație dedicată
-                        pacienților de cancer pulmonar din România</strong>,
-                        navigatorilor acestora, dar și personalului medical.
+                        Ne propunem să dezvoltăm{" "}
+                        <strong>
+                          prima aplicație dedicată pacienților de cancer
+                          pulmonar din România
+                        </strong>
+                        , navigatorilor acestora, dar și personalului medical.
                       </Typography>
                       <Typography
                         variant="body2"
