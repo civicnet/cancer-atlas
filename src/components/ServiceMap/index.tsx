@@ -28,7 +28,7 @@ export type ServiceTypeIndexed<T> = {
   [key in ServiceType]: T;
 }
 
-export type ServiceTypeColor = "#1abc9c" | "#3498db" | "#9b59b6" | "#34495e";
+export type ServiceTypeColor = "#1abc9c" | "#3498db" | "#9b59b6" | "#e67e22";
 
 export const ServiceTypeReadable: ServiceTypeIndexed<string> = {
   [ServiceType.FamilyMedicine]: "Medici de familie",
@@ -48,7 +48,7 @@ export const ServiceTypeColorMap: ServiceTypeIndexed<ServiceTypeColor> = {
   [ServiceType.FamilyMedicine]: "#1abc9c",
   [ServiceType.HomeCare]: "#3498db",
   [ServiceType.Imaging]: "#9b59b6",
-  [ServiceType.Laboratory]: "#34495e"
+  [ServiceType.Laboratory]: "#e67e22"
 }
  
 export interface ServiceObject {
