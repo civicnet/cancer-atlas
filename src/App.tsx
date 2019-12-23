@@ -283,8 +283,8 @@ const App: React.FC = () => {
                         component="p"
                         style={{ marginTop: 6 }}
                       >
-                        Ne propunem să dezvoltăm prima aplicație dedicată
-                        pacienților de cancer pulmonar din România,
+                        Ne propunem să dezvoltăm <strong>prima aplicație dedicată
+                        pacienților de cancer pulmonar din România</strong>,
                         navigatorilor acestora, dar și personalului medical.
                       </Typography>
                       <Typography
@@ -294,8 +294,14 @@ const App: React.FC = () => {
                       >
                         Aplicația va conține informații importante despre
                         traseul pacienților, de la diagnosticare până la
-                        îngrijire paliativă, și informații sub formă de ghiduri
-                        pentru pacienți.
+                        îngrijire paliativă, și informații sub formă de{" "}
+                        <a
+                          href="https://sanatateabuzoiana.ro/primul-ghid-al-supravietuitorului-de-cancer-localizat-la-nivelul-capului-si-gatului/#.XgDw6sYzZhE"
+                          rel="noopener noreferrer"
+                          target="_blank"
+                        >
+                          ghiduri pentru pacienți.
+                        </a>
                       </Typography>
                       <Typography
                         variant="body2"
