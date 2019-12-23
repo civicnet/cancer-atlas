@@ -1,0 +1,53 @@
+{
+  "frames": [
+    {
+      "filename": "flask-solid.svg",
+      "frame": { "x": 0, "y": 0, "w": 448, "h": 512 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 448, "h": 512 },
+      "sourceSize": { "w": 448, "h": 512 }
+    },
+    {
+      "filename": "lungs-solid.svg",
+      "frame": { "x": 0, "y": 512, "w": 640, "h": 512 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 640, "h": 512 },
+      "sourceSize": { "w": 640, "h": 512 }
+    },
+    {
+      "filename": "procedures-solid.svg",
+      "frame": { "x": 896, "y": 0, "w": 640, "h": 512 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 640, "h": 512 },
+      "sourceSize": { "w": 640, "h": 512 }
+    },
+    {
+      "filename": "user-md-solid.svg",
+      "frame": { "x": 448, "y": 0, "w": 448, "h": 512 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 448, "h": 512 },
+      "sourceSize": { "w": 448, "h": 512 }
+    },
+    {
+      "filename": "x-ray-solid.svg",
+      "frame": { "x": 640, "y": 512, "w": 640, "h": 512 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 640, "h": 512 },
+      "sourceSize": { "w": 640, "h": 512 }
+    }
+  ],
+  "meta": {
+    "app": "https://www.codeandweb.com/texturepacker",
+    "version": "1.0",
+    "image": "icon_pack.png",
+    "format": "RGBA8888",
+    "size": { "w": 1536, "h": 1024 },
+    "scale": "1",
+    "smartupdate": "$TexturePacker:SmartUpdate:2153cfe73c1e06bca28186cea345c7df:7b0c9765ad0f1b9935c342d5410ef4a8:17874b6c716169b33b5098c1f0ce3bee$"
+  }
+}
