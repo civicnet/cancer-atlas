@@ -2,7 +2,7 @@
   "name": "cancer-atlas",
   "version": "0.1.0",
   "private": true,
-  "homepage":"https://civicnet.github.io/cancer-atlas",
+  "homepage": "https://civicnet.github.io/cancer-atlas",
   "dependencies": {
     "@material-ui/core": "^4.8.0",
     "@testing-library/jest-dom": "^4.2.4",
@@ -16,6 +16,7 @@
     "clsx": "^1.0.4",
     "deck.gl": "^8.0.0",
     "fg-loadcss": "^2.1.0",
+    "gh-pages": "^2.1.1",
     "material-ui-popup-state": "^1.5.1",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
@@ -48,7 +49,6 @@
   },
   "devDependencies": {
     "@types/chroma-js": "^1.4.3",
-    "@types/react-map-gl": "^5.0.3",
-    "gh-pages": "^2.1.1"
+    "@types/react-map-gl": "^5.0.3"
   }
 }
