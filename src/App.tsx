@@ -57,7 +57,7 @@ const useStyles = makeStyles(theme => ({
   filterList: {
   },
   gradientText: {
-    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    background: "linear-gradient(135deg, #009fff 0%, #ec2f4b 100%)",
     WebkitBackgroundClip: "text",
     WebkitTextFillColor: "transparent"
   },
@@ -68,7 +68,8 @@ const useStyles = makeStyles(theme => ({
     marginBottom: 12
   },
   brandingSymbol: {
-    marginRight: 12
+    marginRight: 12,
+    width: 'unset',
   },
   card: {
     width: "100%"
@@ -178,7 +179,7 @@ const App: React.FC = () => {
                 className={clsx(
                   classes.brandingSymbol,
                   classes.gradientText,
-                  "fas fa-route"
+                  "fas fa-lungs"
                 )}
               />
               Navigator
