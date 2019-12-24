@@ -55,7 +55,6 @@ const useStyles = makeStyles(theme => ({
     maxWidth: 345
   },
   filterList: {
-    marginTop: 20
   },
   gradientText: {
     background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
@@ -66,7 +65,7 @@ const useStyles = makeStyles(theme => ({
     fontWeight: 900,
     lineHeight: "32px",
     textTransform: "uppercase",
-    marginBottom: 20
+    marginBottom: 12
   },
   brandingSymbol: {
     marginRight: 12
@@ -185,7 +184,7 @@ const App: React.FC = () => {
               Navigator
               <sup className={classes.beta}>α</sup>
             </Typography>
-            <Typography variant="body2" component="p">
+            <Typography variant="body1" component="p">
               Aplicația GPS a{" "}
               <a
                 href="https://www.csid.ro/health/noutati-sanatate/navigatorul-de-pacienti-specialistul-cu-rol-important-in-relatia-dintre-pacient-si-medic-16034421/"
@@ -220,41 +219,6 @@ const App: React.FC = () => {
               </a>{" "}
               pentru afișarea pe hartă.
             </Typography>
-            <List className={classes.filterList}>
-              {Object.values(ServiceType).map(file => {
-                const ServiceSwitch = CustomSwitch(ServiceTypeColorMap[file]);
-                return (
-                  <ListItem key={file} classes={{ root: classes.listItemRoot }}>
-                    <ListItemIcon>
-                      <Icon
-                        className={clsx(
-                          classes.serviceIcon,
-                          ServiceTypeIcons[file]
-                        )}
-                      />
-                    </ListItemIcon>
-                    <ListItemText
-                      id="switch-list-label-wifi"
-                      primary={ServiceTypeReadable[file]}
-                    />
-                    <ListItemSecondaryAction>
-                      <ServiceSwitch
-                        edge="end"
-                        disabled={layerType === LayerType.Extruded}
-                        onChange={handleToggle(file)}
-                        checked={
-                          checked.indexOf(file) !== -1 &&
-                          layerType !== LayerType.Extruded
-                        }
-                        inputProps={{
-                          "aria-labelledby": "switch-list-label-wifi"
-                        }}
-                      />
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                );
-              })}
-            </List>
           </CardContent>
           <CardActions>
             <Button
@@ -352,6 +316,45 @@ const App: React.FC = () => {
               )}
             </PopupState>
           </CardActions>
+        </Card>
+        <Card className={classes.card} style={{ marginTop: 20, paddingBottom: 0 }}>
+          <CardContent>
+            <List className={classes.filterList}>
+              {Object.values(ServiceType).map(file => {
+                const ServiceSwitch = CustomSwitch(ServiceTypeColorMap[file]);
+                return (
+                  <ListItem key={file} classes={{ root: classes.listItemRoot }}>
+                    <ListItemIcon>
+                      <Icon
+                        className={clsx(
+                          classes.serviceIcon,
+                          ServiceTypeIcons[file]
+                        )}
+                      />
+                    </ListItemIcon>
+                    <ListItemText
+                      id="switch-list-label-wifi"
+                      primary={ServiceTypeReadable[file]}
+                    />
+                    <ListItemSecondaryAction>
+                      <ServiceSwitch
+                        edge="end"
+                        disabled={layerType === LayerType.Extruded}
+                        onChange={handleToggle(file)}
+                        checked={
+                          checked.indexOf(file) !== -1 &&
+                          layerType !== LayerType.Extruded
+                        }
+                        inputProps={{
+                          "aria-labelledby": "switch-list-label-wifi"
+                        }}
+                      />
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                );
+              })}
+            </List>
+          </CardContent>
         </Card>
         <div
           style={{
