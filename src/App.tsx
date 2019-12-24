@@ -40,6 +40,7 @@ import { CustomSwitch } from "./components/CustomSwitch";
 import Tooltip from "./components/Tooltip";
 import { getAggregateColorRange } from "./components/ServiceMap/layers";
 import chroma from "chroma-js";
+import { HeatmapIcon } from "./components/HeatmapIcon";
 
 const useStyles = makeStyles(theme => ({
   aside: {
@@ -442,7 +443,7 @@ const App: React.FC = () => {
                 aria-label="centered"
                 title="Vezi distribuția furnizorilor de servicii medicale sub formă de heatmap"
               >
-                <Icon className="fal fa-flame" />
+                <HeatmapIcon />
               </ToggleButton>
               <ToggleButton
                 value={LayerType.Grid}
