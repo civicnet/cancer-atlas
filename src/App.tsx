@@ -28,8 +28,14 @@ import {
   Box
 } from "@material-ui/core";
 import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
+
+import ToggleButton from "@material-ui/lab/ToggleButton";
+import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
+
 import { CustomSwitch } from "./components/CustomSwitch";
 import Tooltip from "./components/Tooltip";
+import { getAggregateColorRange } from "./components/ServiceMap/layers";
+import chroma from "chroma-js";
 
 const useStyles = makeStyles(theme => ({
   aside: {
@@ -99,6 +105,13 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+export enum LayerType {
+  ScatterPlot,
+  Heatmap,
+  Grid,
+  Extruded
+}
+
 const App: React.FC = () => {
   const classes = useStyles();
 
@@ -110,6 +123,7 @@ const App: React.FC = () => {
   ]);
   const [tooltip, setTooltip] = React.useState();
   const [pinnedTooltip, setPinnedTooltip] = React.useState();
+  const [layerType, setLayerType] = React.useState(LayerType.ScatterPlot);
 
   React.useEffect(() => {
     loadCSS(
@@ -141,6 +155,14 @@ const App: React.FC = () => {
 
   const unpinTooltip = () => {
     setPinnedTooltip(null);
+  };
+
+  const handleChangeLayerType = (_: any, newLayerType: LayerType) => {
+    if (newLayerType === layerType) {
+      return;
+    }
+
+    setLayerType(newLayerType);
   };
 
   return (
@@ -218,8 +240,12 @@ const App: React.FC = () => {
                     <ListItemSecondaryAction>
                       <ServiceSwitch
                         edge="end"
+                        disabled={layerType === LayerType.Extruded}
                         onChange={handleToggle(file)}
-                        checked={checked.indexOf(file) !== -1}
+                        checked={
+                          checked.indexOf(file) !== -1 &&
+                          layerType !== LayerType.Extruded
+                        }
                         inputProps={{
                           "aria-labelledby": "switch-list-label-wifi"
                         }}
@@ -327,6 +353,81 @@ const App: React.FC = () => {
             </PopupState>
           </CardActions>
         </Card>
+        <div
+          style={{
+            display: "flex",
+            flex: 1,
+            marginTop: 20,
+            backgroundColor: "transparent"
+          }}
+        >
+          <div style={{ flex: 1, display: "flex" }}>
+            <ToggleButtonGroup
+              value={layerType}
+              exclusive={true}
+              onChange={handleChangeLayerType}
+              size="small"
+              aria-label="text alignment"
+            >
+              <ToggleButton
+                value={LayerType.ScatterPlot}
+                aria-label="left aligned"
+                title="Vezi furnizorii de servicii medicale ca puncte pe hartă"
+              >
+                <Icon className="far fa-braille" />
+              </ToggleButton>
+              <ToggleButton
+                value={LayerType.Heatmap}
+                aria-label="centered"
+                title="Vezi distribuția furnizorilor de servicii medicale sub formă de heatmap"
+              >
+                <Icon className="fal fa-flame" />
+              </ToggleButton>
+              <ToggleButton
+                value={LayerType.Grid}
+                aria-label="right aligned"
+                title="Vezi distribuția furnizorilor de servicii medicale sub formă de grid"
+              >
+                <Icon className="fal fa-th" />
+              </ToggleButton>
+              <ToggleButton
+                value={LayerType.Extruded}
+                aria-label="justified"
+                title="Vezi clădirile în care au puncte de lucru medicii de familie"
+              >
+                <Icon className="fal fa-cube" />
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </div>
+          {(layerType === LayerType.Heatmap ||
+            layerType === LayerType.Grid) && (
+            <div style={{ flex: 1, display: "flex", border: "2px solid #FFF" }}>
+              {getAggregateColorRange().map((color, idx) => (
+                <div
+                  style={{
+                    flex: 1,
+                    backgroundColor: chroma(color).hex(),
+                    display: "flex",
+                    textAlign: "center"
+                  }}
+                >
+                  {idx === 0 && (
+                    <Icon
+                      className="fal fa-long-arrow-alt-down"
+                      style={{ color: "#fff", alignSelf: "center" }}
+                    />
+                  )}
+                  {idx === 5 && (
+                    <Icon
+                      className="fal fa-long-arrow-alt-up"
+                      style={{ color: "#333", alignSelf: "center" }}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </aside>
       <div className={classes.tooltipContainer}>
         {<Tooltip service={pinnedTooltip} onClose={unpinTooltip} />}
@@ -337,6 +438,7 @@ const App: React.FC = () => {
           services={checked}
           onHover={onServiceHover}
           onClick={onServiceClick}
+          layerType={layerType}
         />
       </main>
     </div>

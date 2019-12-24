@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 
 import DeckGL from "@deck.gl/react";
-import { ScatterplotLayer } from "@deck.gl/layers";
 import { StaticMap } from "react-map-gl";
-import chroma from "chroma-js";
+import { LayerType } from "../../App";
+import { getLayer } from "./layers";
 
 const INITIAL_VIEW_STATE = {
   width: window.innerWidth,
@@ -26,7 +26,7 @@ export enum ServiceType {
 
 export type ServiceTypeIndexed<T> = {
   [key in ServiceType]: T;
-}
+};
 
 export type ServiceTypeColor = "#1abc9c" | "#3498db" | "#9b59b6" | "#e67e22";
 
@@ -35,45 +35,64 @@ export const ServiceTypeReadable: ServiceTypeIndexed<string> = {
   [ServiceType.HomeCare]: "Îngrijire la domiciliu",
   [ServiceType.Imaging]: "Servicii de imagistică",
   [ServiceType.Laboratory]: "Laboratoare de analiză"
-}
+};
+
+export const ServiceTypeBuildings: ServiceTypeIndexed<string | null> = {
+  [ServiceType.FamilyMedicine]: "mf_buildings_with_attrs_epsg4326",
+  [ServiceType.HomeCare]: null,
+  [ServiceType.Imaging]: null,
+  [ServiceType.Laboratory]: null
+};
 
 export const ServiceTypeIcons: ServiceTypeIndexed<string> = {
   [ServiceType.FamilyMedicine]: "fal fa-user-md",
   [ServiceType.HomeCare]: "fal fa-home-heart",
   [ServiceType.Imaging]: "fal fa-lungs",
   [ServiceType.Laboratory]: "fal fa-flask"
-}
+};
 
 export const ServiceTypeColorMap: ServiceTypeIndexed<ServiceTypeColor> = {
   [ServiceType.FamilyMedicine]: "#1abc9c",
   [ServiceType.HomeCare]: "#3498db",
   [ServiceType.Imaging]: "#9b59b6",
   [ServiceType.Laboratory]: "#e67e22"
-}
- 
+};
+
 export interface ServiceObject {
-  type: ServiceType,
-  [key: string]: string,
+  type: ServiceType;
+  [key: string]: string;
+}
+
+export interface LayerProps {
+  onHover: (obj: ServiceObject) => void;
+  onClick: (obj: ServiceObject) => void;
+  layerType: LayerType;
 }
 
 interface Props {
   services: ServiceType[];
-  onHover: (obj: ServiceObject) => void,
-  onClick: (obj: ServiceObject) => void,
 }
- 
-const ServiceMap: React.FC<Props> = (props: Props) => {
-  const [data, setData] = useState();
 
-  const api = async (files: ServiceType[]) => {
+const ServiceMap: React.FC<Props & LayerProps> = (
+  props: Props & LayerProps
+) => {
+  const [pointData, setPointData] = useState();
+  const [buildingData, setBuildingData] = useState();
+  const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
+
+  const api = async (
+    files: ServiceType[],
+    cb: (data: any) => void,
+    type: "json" | "geojson" = "json"
+  ) => {
     const responses = files.map(file =>
       fetch(
-        `https://cdn.jsdelivr.net/gh/civicnet/cancer-atlas-scripts@0.1.0/data/json/${file}.json`
+        `https://cdn.jsdelivr.net/gh/civicnet/cancer-atlas-scripts@0.1.1/data/${type}/${file}.${type}`
       )
         .then(response => response.json())
         .then(json => {
           return json.map((service: any) => {
-            return { 
+            return {
               ...service,
               type: file
             };
@@ -83,46 +102,101 @@ const ServiceMap: React.FC<Props> = (props: Props) => {
 
     Promise.all(responses).then(results => {
       const allServices = [].concat.apply([], results);
-      setData(allServices);
+      cb(allServices);
+    });
+  };
+
+  const geojsonApi = async (
+    files: { file: string; type: ServiceType }[],
+    cb: (data: any) => void,
+    type: "json" | "geojson" = "geojson"
+  ) => {
+    const responses = files.map(({ file }) =>
+      fetch(
+        `https://cdn.jsdelivr.net/gh/civicnet/cancer-atlas-scripts@0.1.1/data/${type}/${file}.${type}`
+      )
+        .then(response => response.json())
+        .then(json => {
+          return json.features.map((service: any) => {
+            return {
+              ...service,
+              type: file
+            };
+          });
+        })
+    );
+
+    Promise.all(responses).then(results => {
+      const allServices = [].concat.apply([], results);
+      cb(allServices);
     });
   };
 
   useEffect(() => {
-    api(props.services);
-  }, [props]);
+    if (buildingData) {
+      return;
+    }
 
-  if (!data) {
+    if (props.layerType === LayerType.Extruded) {
+      const files = [
+        {
+          file: ServiceTypeBuildings[ServiceType.FamilyMedicine],
+          type: ServiceType.FamilyMedicine
+        }
+      ].filter(Boolean) as { file: string; type: ServiceType }[];
+
+      geojsonApi(files, setBuildingData, "geojson");
+    }
+  }, [props.layerType, buildingData]);
+
+  useEffect(() => {
+    api(props.services, setPointData);
+  }, [props.services]);
+
+  useEffect(() => {
+    if (props.layerType === LayerType.Extruded) {
+      setViewState(v => ({
+        ...v,
+        zoom: 15.5,
+        pitch: 45
+      }));
+    } else {
+      setViewState(v => ({
+        ...v,
+        zoom: 11,
+        pitch: 0
+      }));
+    }
+  }, [props.layerType]);
+
+  if (!pointData) {
     return null;
   }
 
-  const scatterplot = new ScatterplotLayer({
-    id: "ScatterplotLayer",
-    data,
-    pickable: true,
-    opacity: 0.6,
-    stroked: true,
-    filled: true,
-    radiusScale: 10,
-    radiusMinPixels: 5,
-    radiusMaxPixels: 20,
-    lineWidthMinPixels: 1,
-    getPosition: (d: any) => [d.lng, d.lat],
-    getRadius: 12,
-    getFillColor: (d: any) => chroma(ServiceTypeColorMap[d.type as ServiceType]).rgb(),
-    getLineColor: [0, 0, 0],
-    onHover: (d: any) => props.onHover(d.object),
-    onClick: (d: any) => props.onClick(d.object),
-  });
+  const layer = getLayer(
+    props.layerType !== LayerType.Extruded ? pointData : buildingData,
+    props
+  );
+
+  const handleViewStateChange = ({
+    viewState,
+    interactionState,
+    oldViewState
+  }: any) => {
+    setViewState(viewState);
+  };
 
   return (
     <DeckGL
-      initialViewState={INITIAL_VIEW_STATE}
+      viewState={viewState}
+      onViewStateChange={handleViewStateChange}
       controller={true}
-      layers={[scatterplot]}
+      layers={[layer]}
     >
       <StaticMap
         width="100%"
         height="100%"
+        mapStyle="mapbox://styles/claudiuc/ck4j3z14e09hg1dmkpijn2kma"
         mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
       />
     </DeckGL>
