@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "4d31ffebdb99a7ab81d7c984198ebe46",
+    "revision": "f24da75db78c659bad5bdbd801790aab",
     "url": "/cancer-atlas/index.html"
   },
   {
-    "revision": "11ee059e741f4c33c28b",
+    "revision": "74dd01c6388fe4587d46",
     "url": "/cancer-atlas/static/css/main.5ecd60fb.chunk.css"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/cancer-atlas/static/js/2.0d9d0e81.chunk.js.LICENSE"
   },
   {
-    "revision": "11ee059e741f4c33c28b",
-    "url": "/cancer-atlas/static/js/main.3a4e4f64.chunk.js"
+    "revision": "74dd01c6388fe4587d46",
+    "url": "/cancer-atlas/static/js/main.1de2c692.chunk.js"
   },
   {
     "revision": "4d92297db5c037f40212",
