@@ -436,28 +436,28 @@ const App: React.FC = () => {
                 aria-label="left aligned"
                 title="Vezi furnizorii de servicii medicale ca puncte pe hartă"
               >
-                <Icon className="far fa-braille" />
+                <Icon className="fad fa-braille" />
               </ToggleButton>
               <ToggleButton
                 value={LayerType.Heatmap}
                 aria-label="centered"
                 title="Vezi distribuția furnizorilor de servicii medicale sub formă de heatmap"
               >
-                <HeatmapIcon />
+                <Icon className="fad fa-steak" style={{ width: 'unset' }}/>
               </ToggleButton>
               <ToggleButton
                 value={LayerType.Grid}
                 aria-label="right aligned"
                 title="Vezi distribuția furnizorilor de servicii medicale sub formă de grid"
               >
-                <Icon className="fal fa-th" />
+                <Icon className="fad fa-th" />
               </ToggleButton>
               <ToggleButton
                 value={LayerType.Extruded}
                 aria-label="justified"
                 title="Vezi clădirile în care au puncte de lucru medicii de familie"
               >
-                <Icon className="fal fa-cube" />
+                <Icon className="fad fa-cube" />
               </ToggleButton>
             </ToggleButtonGroup>
           </div>
