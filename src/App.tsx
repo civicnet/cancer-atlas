@@ -34,7 +34,7 @@ import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
 import ToggleButton from "@material-ui/lab/ToggleButton";
 import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 import { CustomSwitch } from "./components/CustomSwitch";
 import Tooltip from "./components/Tooltip";
@@ -107,15 +107,15 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(1)
   },
   expand: {
-    transform: 'rotate(0deg)',
-    marginLeft: 'auto !important',
-    transition: theme.transitions.create('transform', {
-      duration: theme.transitions.duration.shortest,
-    }),
+    transform: "rotate(0deg)",
+    marginLeft: "auto !important",
+    transition: theme.transitions.create("transform", {
+      duration: theme.transitions.duration.shortest
+    })
   },
   expandOpen: {
-    transform: 'rotate(180deg)',
-  },
+    transform: "rotate(180deg)"
+  }
 }));
 
 export enum LayerType {
@@ -217,12 +217,6 @@ const App: React.FC = () => {
             </Typography>
           </CardContent>
           <CardActions>
-            <Button
-              size="small"
-              href="https://github.com/civicnet/cancer-atlas"
-            >
-              Cod sursă
-            </Button>
             <PopupState variant="popover" popupId="demo-popup-popover">
               {popupState => (
                 <div>
@@ -355,6 +349,21 @@ const App: React.FC = () => {
                   am generat coordonatele GPS
                 </a>{" "}
                 pentru afișarea pe hartă.
+              </Typography>
+              <Typography
+                variant="body2"
+                component="p"
+                style={{ marginTop: 6 }}
+              >
+                Codul sursă complet este disponibil pe{" "}
+                <a
+                  href="https://github.com/civicnet/cancer-atlas"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  GitHub
+                </a>
+                .
               </Typography>
             </CardContent>
           </Collapse>
