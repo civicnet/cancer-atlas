@@ -47,7 +47,7 @@ export const ServiceTypeBuildings: ServiceTypeIndexed<string | null> = {
 export const ServiceTypeIcons: ServiceTypeIndexed<string> = {
   [ServiceType.FamilyMedicine]: "fal fa-user-md",
   [ServiceType.HomeCare]: "fal fa-home-heart",
-  [ServiceType.Imaging]: "fal fa-lungs",
+  [ServiceType.Imaging]: "fal fa-x-ray",
   [ServiceType.Laboratory]: "fal fa-flask"
 };
 
