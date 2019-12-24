@@ -26,11 +26,15 @@ import {
   ListItemSecondaryAction,
   Popover,
   Box,
+  IconButton,
+  Collapse
 } from "@material-ui/core";
 import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
 
 import ToggleButton from "@material-ui/lab/ToggleButton";
 import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
+
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import { CustomSwitch } from "./components/CustomSwitch";
 import Tooltip from "./components/Tooltip";
@@ -54,8 +58,7 @@ const useStyles = makeStyles(theme => ({
     minWidth: 345,
     maxWidth: 345
   },
-  filterList: {
-  },
+  filterList: {},
   gradientText: {
     background: "linear-gradient(135deg, #009fff 0%, #ec2f4b 100%)",
     WebkitBackgroundClip: "text",
@@ -69,7 +72,7 @@ const useStyles = makeStyles(theme => ({
   },
   brandingSymbol: {
     marginRight: 12,
-    width: 'unset',
+    width: "unset"
   },
   card: {
     width: "100%"
@@ -102,7 +105,17 @@ const useStyles = makeStyles(theme => ({
   },
   paper: {
     padding: theme.spacing(1)
-  }
+  },
+  expand: {
+    transform: 'rotate(0deg)',
+    marginLeft: 'auto !important',
+    transition: theme.transitions.create('transform', {
+      duration: theme.transitions.duration.shortest,
+    }),
+  },
+  expandOpen: {
+    transform: 'rotate(180deg)',
+  },
 }));
 
 export enum LayerType {
@@ -124,6 +137,12 @@ const App: React.FC = () => {
   const [tooltip, setTooltip] = React.useState();
   const [pinnedTooltip, setPinnedTooltip] = React.useState();
   const [layerType, setLayerType] = React.useState(LayerType.ScatterPlot);
+
+  const [expanded, setExpanded] = React.useState(false);
+
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
+  };
 
   React.useEffect(() => {
     loadCSS(
@@ -169,7 +188,7 @@ const App: React.FC = () => {
     <div>
       <aside className={classes.aside}>
         <Card className={classes.card}>
-          <CardContent>
+          <CardContent style={{ paddingBottom: 0 }}>
             <Typography
               variant="h5"
               component="h2"
@@ -195,30 +214,6 @@ const App: React.FC = () => {
                 navigatorilor de pacienți oncologici
               </a>{" "}
               din România.
-            </Typography>
-            <Typography variant="body2" component="p" style={{ marginTop: 6 }}>
-              Poți explora harta prin hover și click pe punctele afișate, și
-              prin selecția categoriilor de furnizori medicali pe care dorești
-              să îi afișezi. Datele sunt preluate pentru Municipiul București{" "}
-              <a
-                href="http://www.cnas.ro/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                de pe site-ul CNAS
-              </a>
-              .
-            </Typography>
-            <Typography variant="body2" component="p" style={{ marginTop: 6 }}>
-              Adițional, pentru fiecare furnizor afișat,{" "}
-              <a
-                href="https://github.com/civicnet/cancer-atlas-scripts"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                am generat coordonatele GPS
-              </a>{" "}
-              pentru afișarea pe hartă.
             </Typography>
           </CardContent>
           <CardActions>
@@ -316,17 +311,67 @@ const App: React.FC = () => {
                 </div>
               )}
             </PopupState>
+            <IconButton
+              className={clsx(classes.expand, {
+                [classes.expandOpen]: expanded
+              })}
+              onClick={handleExpandClick}
+              aria-expanded={expanded}
+              aria-label="show more"
+            >
+              <ExpandMoreIcon />
+            </IconButton>
           </CardActions>
+          <Collapse in={expanded} timeout="auto" unmountOnExit>
+            <CardContent>
+              <Typography
+                variant="body2"
+                component="p"
+                style={{ marginTop: 6 }}
+              >
+                Poți explora harta prin hover și click pe punctele afișate, și
+                prin selecția categoriilor de furnizori medicali pe care dorești
+                să îi afișezi. Datele sunt preluate pentru Municipiul București{" "}
+                <a
+                  href="http://www.cnas.ro/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  de pe site-ul CNAS
+                </a>
+                .
+              </Typography>
+              <Typography
+                variant="body2"
+                component="p"
+                style={{ marginTop: 6 }}
+              >
+                Adițional, pentru fiecare furnizor afișat,{" "}
+                <a
+                  href="https://github.com/civicnet/cancer-atlas-scripts"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  am generat coordonatele GPS
+                </a>{" "}
+                pentru afișarea pe hartă.
+              </Typography>
+            </CardContent>
+          </Collapse>
         </Card>
-        <Card className={classes.card} style={{ marginTop: 20, paddingBottom: 0 }}>
+        <Card
+          className={classes.card}
+          style={{ marginTop: 20, paddingBottom: 0 }}
+        >
           <CardContent>
             <List className={classes.filterList}>
               {Object.values(ServiceType).map(file => {
-                const ServiceSwitch = layerType === LayerType.ScatterPlot
-                  ? CustomSwitch(ServiceTypeColorMap[file])
-                  : CustomSwitch();
-                
-              return (
+                const ServiceSwitch =
+                  layerType === LayerType.ScatterPlot
+                    ? CustomSwitch(ServiceTypeColorMap[file])
+                    : CustomSwitch();
+
+                return (
                   <ListItem key={file} classes={{ root: classes.listItemRoot }}>
                     <ListItemIcon>
                       <Icon
@@ -427,7 +472,7 @@ const App: React.FC = () => {
                   )}
                   {idx === 5 && (
                     <Icon
-                    title="Zone cu număr mai mare de furnizori de servicii medicale"
+                      title="Zone cu număr mai mare de furnizori de servicii medicale"
                       className="fal fa-long-arrow-alt-up"
                       style={{ color: "#333", alignSelf: "center" }}
                     />
