@@ -40,7 +40,6 @@ import { CustomSwitch } from "./components/CustomSwitch";
 import Tooltip from "./components/Tooltip";
 import { getAggregateColorRange } from "./components/ServiceMap/layers";
 import chroma from "chroma-js";
-import { HeatmapIcon } from "./components/HeatmapIcon";
 
 const useStyles = makeStyles(theme => ({
   aside: {
