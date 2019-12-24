@@ -58,8 +58,9 @@ const getHeatmap = (pointData: any, props: LayerProps) => {
     id: "HeatmapLayer",
     data: pointData,
     colorRange: getAggregateColorRange(),
-    opacity: 0.5,
-    getPosition: (d: any) => [d.lng, d.lat]
+    opacity: 0.75,
+    getPosition: (d: any) => [d.lng, d.lat],
+    radiusPixels: 80,
   });
 };
 
