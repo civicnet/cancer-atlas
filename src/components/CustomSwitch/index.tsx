@@ -3,15 +3,17 @@ import Switch from '@material-ui/core/Switch';
  
 import { ServiceTypeColor } from '../ServiceMap';
 
-export const CustomSwitch = (color: ServiceTypeColor) => {
+export const CustomSwitch = (color?: ServiceTypeColor) => {
+    let switchColor = color || '#34495e';
+
     return withStyles({
         switchBase: {
-            color,
+            color: switchColor,
             '&$checked': {
-                color,
+                color: switchColor,
             },
             '&$checked + $track': {
-                backgroundColor: color,
+                backgroundColor: switchColor,
             },
         },
         checked: {},

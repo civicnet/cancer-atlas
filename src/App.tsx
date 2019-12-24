@@ -25,7 +25,7 @@ import {
   ListItemText,
   ListItemSecondaryAction,
   Popover,
-  Box
+  Box,
 } from "@material-ui/core";
 import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
 
@@ -321,8 +321,11 @@ const App: React.FC = () => {
           <CardContent>
             <List className={classes.filterList}>
               {Object.values(ServiceType).map(file => {
-                const ServiceSwitch = CustomSwitch(ServiceTypeColorMap[file]);
-                return (
+                const ServiceSwitch = layerType === LayerType.ScatterPlot
+                  ? CustomSwitch(ServiceTypeColorMap[file])
+                  : CustomSwitch();
+                
+              return (
                   <ListItem key={file} classes={{ root: classes.listItemRoot }}>
                     <ListItemIcon>
                       <Icon
