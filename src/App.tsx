@@ -465,6 +465,7 @@ const App: React.FC = () => {
             <div style={{ flex: 1, display: "flex", border: "2px solid #FFF" }}>
               {getAggregateColorRange().map((color, idx) => (
                 <div
+                  key={`legend-${color}-${idx}`}
                   style={{
                     flex: 1,
                     backgroundColor: chroma(color).hex(),

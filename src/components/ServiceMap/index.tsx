@@ -196,6 +196,7 @@ const ServiceMap: React.FC<Props & LayerProps> = (
       layers={[layer]}
     >
       <StaticMap
+        key="static_map"
         width="100%"
         height="100%"
         mapStyle="mapbox://styles/claudiuc/ck4j3z14e09hg1dmkpijn2kma"
