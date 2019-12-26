@@ -159,13 +159,11 @@ const ServiceMap: React.FC<Props & LayerProps> = (
     if (props.layerType === LayerType.Extruded) {
       setViewState(v => ({
         ...v,
-        zoom: 15.5,
         pitch: 45
       }));
     } else {
       setViewState(v => ({
         ...v,
-        zoom: 11,
         pitch: 0
       }));
     }
