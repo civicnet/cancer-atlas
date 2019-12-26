@@ -17,11 +17,13 @@ const INITIAL_VIEW_STATE = {
   pitch: 0
 };
 
+const VERSION = '0.2.0';
+
 export enum ServiceType {
-  FamilyMedicine = "mf_bucuresti_with_loc_min_flat",
-  Laboratory = "laboratoare_bucuresti_with_loc_min_flat",
-  HomeCare = "ingrijiri_domiciliu_bucuresti_with_loc_min_flat",
-  Imaging = "imagistica_bucuresti_with_loc_min_flat"
+  FamilyMedicine = "family_medicine",
+  Laboratory = "laboratories",
+  HomeCare = "home_care",
+  Imaging = "imaging"
 }
 
 export type ServiceTypeIndexed<T> = {
@@ -87,7 +89,7 @@ const ServiceMap: React.FC<Props & LayerProps> = (
   ) => {
     const responses = files.map(file =>
       fetch(
-        `https://cdn.jsdelivr.net/gh/civicnet/cancer-atlas-scripts@0.1.1/data/${type}/${file}.${type}`
+        `https://cdn.jsdelivr.net/gh/civicnet/cancer-atlas-scripts@${VERSION}/data/${type}/national/${file}.${type}`
       )
         .then(response => response.json())
         .then(json => {
@@ -113,7 +115,7 @@ const ServiceMap: React.FC<Props & LayerProps> = (
   ) => {
     const responses = files.map(({ file }) =>
       fetch(
-        `https://cdn.jsdelivr.net/gh/civicnet/cancer-atlas-scripts@0.1.1/data/${type}/${file}.${type}`
+        `https://cdn.jsdelivr.net/gh/civicnet/cancer-atlas-scripts@${VERSION}/data/${type}/${file}.${type}`
       )
         .then(response => response.json())
         .then(json => {
