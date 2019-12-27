@@ -8,16 +8,16 @@ import { getLayer } from "./layers";
 const INITIAL_VIEW_STATE = {
   width: window.innerWidth,
   height: window.innerHeight,
-  longitude: 26.1,
-  latitude: 44.4368449,
-  zoom: 11,
+  longitude: 23.5602928,
+  latitude: 46.0291793,
+  zoom: 6,
   maxZoom: 20,
   minZoom: 1,
   bearing: 0,
   pitch: 0
 };
 
-const VERSION = '0.2.1';
+const VERSION = '0.2.4';
 
 export enum ServiceType {
   FamilyMedicine = "family_medicine",

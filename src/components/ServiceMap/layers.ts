@@ -61,6 +61,7 @@ const getHeatmap = (pointData: any, props: LayerProps) => {
     opacity: 0.75,
     getPosition: (d: any) => [d.lng, d.lat],
     radiusPixels: 80,
+    intensity: 1,
   });
 };
 
@@ -68,13 +69,14 @@ const getGrid = (pointData: any, props: LayerProps) => {
   return new ScreenGridLayer({
     id: "ScreenGridLayer",
     data: pointData,
-    cellSize: 500,
+    // cellSize: 25,
     colorRange: getAggregateColorRange(),
-    cellSizePixels: 40,
-    colorAggregation: "count",
-    sizeAggregation: "count",
-    coverage: 0.75,
-    opacity: 0.5,
+    cellSizePixels: 15,
+    // colorAggregation: "count",
+    // sizeAggregation: "count",
+    aggregation: "SUM",
+    coverage: 0.9,
+    opacity: 0.7,
     colorScaleType: "quantile",
     getPosition: (d: any) => [d.lng, d.lat]
   });
