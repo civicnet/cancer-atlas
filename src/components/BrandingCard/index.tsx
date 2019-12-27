@@ -20,6 +20,7 @@ import { RootState } from "../../store/rootReducer";
 import clsx from "clsx";
 import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
 import { toggleBrandingCardExpansion } from "./BrandingCardSlice";
+import Logo from "../Logo";
 
 const useStyles = makeStyles(theme => ({
   gradientText: {
@@ -72,21 +73,6 @@ const BrandingCard: React.FC = () => {
   return (
     <Card className={classes.card}>
       <CardContent style={{ paddingBottom: 0 }}>
-        <Typography
-          variant="h5"
-          component="h2"
-          className={clsx(classes.branding, classes.gradientText)}
-        >
-          <Icon
-            className={clsx(
-              classes.brandingSymbol,
-              classes.gradientText,
-              "fas fa-lungs"
-            )}
-          />
-          Navigator
-              <sup className={classes.beta}>α</sup>
-        </Typography>
         <Typography variant="body1" component="p">
           Aplicația GPS a{" "}
           <a
