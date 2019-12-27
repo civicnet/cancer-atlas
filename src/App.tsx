@@ -11,7 +11,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import {
-  List,
+  List, CssBaseline,
 } from "@material-ui/core";
 
 import { useSelector } from 'react-redux'
@@ -97,6 +97,7 @@ const App: React.FC = () => {
 
   return (
     <div>
+      <CssBaseline />
       <aside className={classes.aside}>
         <BrandingCard />
         <Card
