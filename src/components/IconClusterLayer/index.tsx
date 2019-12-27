@@ -1,5 +1,5 @@
-import {CompositeLayer} from '@deck.gl/core';
-import {IconLayer} from '@deck.gl/layers';
+import { CompositeLayer } from '@deck.gl/core';
+import { IconLayer } from '@deck.gl/layers';
 import Supercluster from 'supercluster';
 
 function getIconName(size: number) {
@@ -27,22 +27,22 @@ export default class IconClusterLayer extends CompositeLayer {
     super(props);
   }
 
-  shouldUpdateState({changeFlags}: {changeFlags: any}) {
+  shouldUpdateState({ changeFlags }: { changeFlags: any }) {
     return changeFlags.somethingChanged;
   }
 
-  updateState({props, oldProps, changeFlags}: {props: any, oldProps: any, changeFlags: any}) {
+  updateState({ props, oldProps, changeFlags }: { props: any, oldProps: any, changeFlags: any }) {
     const rebuildIndex = changeFlags.dataChanged || props.sizeScale !== oldProps.sizeScale;
 
     if (rebuildIndex) {
-      const index = new Supercluster({maxZoom: 16, radius: props.sizeScale});
+      const index = new Supercluster({ maxZoom: 16, radius: props.sizeScale });
       index.load(
         props.data.map((d: any) => ({
-          geometry: {coordinates: props.getPosition(d)},
+          geometry: { coordinates: props.getPosition(d) },
           properties: d
         }))
       );
-      this.setState({index});
+      this.setState({ index });
     }
 
     const z = Math.floor(this.context.viewport.zoom);
@@ -54,7 +54,7 @@ export default class IconClusterLayer extends CompositeLayer {
     }
   }
 
-  getPickingInfo({info, mode}: {info: any, mode: any}) {
+  getPickingInfo({ info, mode }: { info: any, mode: any }) {
     const pickedObject = info.object && info.object.properties;
     if (pickedObject) {
       if (pickedObject.cluster && mode !== 'hover') {
@@ -68,8 +68,8 @@ export default class IconClusterLayer extends CompositeLayer {
   }
 
   renderLayers() {
-    const {data} = this.state;
-    const {iconAtlas, iconMapping, sizeScale, id} = this.props;
+    const { data } = this.state;
+    const { iconAtlas, iconMapping, sizeScale, id } = this.props;
 
     return new IconLayer(
       this.getSubLayerProps({
