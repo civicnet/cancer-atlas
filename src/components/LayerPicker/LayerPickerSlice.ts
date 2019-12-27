@@ -1,10 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 export enum LayerType {
-  ScatterPlot,
-  Heatmap,
-  Grid,
-  Extruded
+  ScatterPlot = 'ScatterPlot',
+  Icon = 'Icon',
+  Heatmap = 'Heatmap',
+  Grid = 'Grid',
+  Extruded = 'Extruded'
 }
 
 type CurrentDisplayState = {

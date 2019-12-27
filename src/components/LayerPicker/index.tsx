@@ -6,23 +6,19 @@ import ToggleButton from "@material-ui/lab/ToggleButton";
 
 import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from '../../store/rootReducer'
-import { setLayerType } from './LayerPickerSlice';
+import { setLayerType, LayerType } from './LayerPickerSlice';
+import ScatterPlotTwoToneIcon from '@material-ui/icons/ScatterPlotTwoTone';
 
-/* const useStyles = makeStyles(theme => ({
-})); */
+interface LayerTypeData {
+  title: string,
+  icon: string | JSX.Element,
+}
 
-export enum LayerType {
-  ScatterPlot,
-  Heatmap,
-  Grid,
-  Extruded
+type LayerTypeList = {
+  [key in LayerType]: LayerTypeData;
 }
 
 const LayerPicker: React.FC = () => {
-  /* const classes = useStyles(); */
-
-  // const [layerType, setLayerType] = React.useState(LayerType.ScatterPlot);
-
   const dispatch = useDispatch();
   const { layerType } = useSelector(
     (state: RootState) => state.layerPickerReducer
@@ -31,6 +27,29 @@ const LayerPicker: React.FC = () => {
   const handleChangeLayerType = (_: any, newLayerType: LayerType) => {
     dispatch(setLayerType(newLayerType));
   };
+
+  const layerTypePickerData: LayerTypeList = {
+    [LayerType.ScatterPlot]: {
+      icon: <ScatterPlotTwoToneIcon />,
+      title: "Vezi furnizorii de servicii medicale ca puncte pe hartă",
+    },
+    [LayerType.Icon]: {
+      icon: "fad fa-map-marker-alt",
+      title: "Vezi furnizorii de servicii medicale agregati dupa densitate",
+    },
+    [LayerType.Heatmap]: {
+      icon: "fad fa-steak",
+      title: "Vezi distribuția furnizorilor de servicii medicale sub formă de heatmap",
+    },
+    [LayerType.Grid]: {
+      icon: "fad fa-th",
+      title: "Vezi distribuția furnizorilor de servicii medicale sub formă de grid",
+    },
+    [LayerType.Extruded]: {
+      icon: "fad fa-cube",
+      title: "Vezi clădirile în care au puncte de lucru medicii de familie",
+    }
+  }
 
   return (
     <div style={{ flex: 1, display: "flex" }}>
@@ -41,34 +60,20 @@ const LayerPicker: React.FC = () => {
         size="small"
         aria-label="text alignment"
       >
-        <ToggleButton
-          value={LayerType.ScatterPlot}
-          aria-label="left aligned"
-          title="Vezi furnizorii de servicii medicale ca puncte pe hartă"
-        >
-          <Icon className="fad fa-braille" />
-        </ToggleButton>
-        <ToggleButton
-          value={LayerType.Heatmap}
-          aria-label="centered"
-          title="Vezi distribuția furnizorilor de servicii medicale sub formă de heatmap"
-        >
-          <Icon className="fad fa-steak" style={{ width: 'unset' }} />
-        </ToggleButton>
-        <ToggleButton
-          value={LayerType.Grid}
-          aria-label="right aligned"
-          title="Vezi distribuția furnizorilor de servicii medicale sub formă de grid"
-        >
-          <Icon className="fad fa-th" />
-        </ToggleButton>
-        <ToggleButton
-          value={LayerType.Extruded}
-          aria-label="justified"
-          title="Vezi clădirile în care au puncte de lucru medicii de familie"
-        >
-          <Icon className="fad fa-cube" />
-        </ToggleButton>
+        {Object.entries(layerTypePickerData).map(([key, data]) => (
+          <ToggleButton
+            value={key}
+            aria-label={key}
+            title={data.title}
+          >
+            {
+              typeof data.icon === "string"
+                ? <Icon className={data.icon} style={{ width: 'unset' }} />
+                : data.icon
+            }
+
+          </ToggleButton>
+        ))}
       </ToggleButtonGroup>
     </div>
   );

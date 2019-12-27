@@ -6,6 +6,7 @@ import { GeoJsonLayer } from "@deck.gl/layers";
 
 import chroma from "chroma-js";
 import { LayerType } from "../LayerPicker/LayerPickerSlice";
+import IconClusterLayer from "../IconClusterLayer";
 
 export const getAggregateColorRange = () => [
   chroma("#5A1846").rgb(),
@@ -26,6 +27,8 @@ export const getLayer = (data: any, props: LayerProps) => {
       return getGrid(data, props);
     case LayerType.Extruded:
       return getExtruded(data, props);
+    case LayerType.Icon:
+      return getIcon(data, props);
     default:
       return getScatterplot(data, props);
   }
@@ -50,6 +53,21 @@ const getScatterplot = (pointData: any, props: LayerProps) => {
     getLineColor: [0, 0, 0],
     onHover: (d: any) => props.onHover(d.object),
     onClick: (d: any) => props.onClick(d.object)
+  });
+};
+
+const getIcon = (pointData: any, props: LayerProps) => {
+  return new IconClusterLayer({
+    id: "IconLayer",
+    data: pointData,
+    getPosition: (d: any) => [d.lng, d.lat],
+    iconMapping: 'data/location-icon-mapping.json',
+    iconAtlas: 'data/location-icon-atlas.png',
+    sizeScale: 30,
+    getIcon: (d: any) => 'marker',
+    pickable: true,
+    // onHover: (d: any) => props.onHover(d.object),
+    // onClick: (d: any) => props.onClick(d.object)
   });
 };
 
