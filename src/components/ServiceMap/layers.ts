@@ -5,7 +5,7 @@ import { ScreenGridLayer } from "@deck.gl/aggregation-layers";
 import { GeoJsonLayer } from "@deck.gl/layers";
 
 import chroma from "chroma-js";
-import { LayerType } from "../../App";
+import { LayerType } from "../LayerPicker/LayerPickerSlice";
 
 export const getAggregateColorRange = () => [
   chroma("#5A1846").rgb(),

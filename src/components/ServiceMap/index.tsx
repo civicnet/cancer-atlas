@@ -1,23 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import DeckGL from "@deck.gl/react";
 import { StaticMap } from "react-map-gl";
-import { LayerType } from "../../App";
 import { getLayer } from "./layers";
-
-const INITIAL_VIEW_STATE = {
-  width: window.innerWidth,
-  height: window.innerHeight,
-  longitude: 23.5602928,
-  latitude: 46.0291793,
-  zoom: 6,
-  maxZoom: 20,
-  minZoom: 1,
-  bearing: 0,
-  pitch: 0
-};
-
-const VERSION = '0.2.4';
+import { LayerType } from "../LayerPicker/LayerPickerSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../store/rootReducer";
+import { updateViewState, fetchMedicalServicesData, fetchMedicalServicesBuildingData } from './ServiceMapSlice';
 
 export enum ServiceType {
   FamilyMedicine = "family_medicine",
@@ -78,64 +67,14 @@ interface Props {
 const ServiceMap: React.FC<Props & LayerProps> = (
   props: Props & LayerProps
 ) => {
-  const [pointData, setPointData] = useState();
-  const [buildingData, setBuildingData] = useState();
-  const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
 
-  const api = async (
-    files: ServiceType[],
-    cb: (data: any) => void,
-    type: "json" | "geojson" = "json"
-  ) => {
-    const responses = files.map(file =>
-      fetch(
-        `https://cdn.jsdelivr.net/gh/civicnet/cancer-atlas-scripts@${VERSION}/data/${type}/national/${file}.${type}`
-      )
-        .then(response => response.json())
-        .then(json => {
-          return json.map((service: any) => {
-            return {
-              ...service,
-              type: file
-            };
-          });
-        })
-    );
-
-    Promise.all(responses).then(results => {
-      const allServices = [].concat.apply([], results);
-      cb(allServices);
-    });
-  };
-
-  const geojsonApi = async (
-    files: { file: string; type: ServiceType }[],
-    cb: (data: any) => void,
-    type: "json" | "geojson" = "geojson"
-  ) => {
-    const responses = files.map(({ file }) =>
-      fetch(
-        `https://cdn.jsdelivr.net/gh/civicnet/cancer-atlas-scripts@${VERSION}/data/${type}/${file}.${type}`
-      )
-        .then(response => response.json())
-        .then(json => {
-          return json.features.map((service: any) => {
-            return {
-              ...service,
-              type: file
-            };
-          });
-        })
-    );
-
-    Promise.all(responses).then(results => {
-      const allServices = [].concat.apply([], results);
-      cb(allServices);
-    });
-  };
+  const dispatch = useDispatch();
+  const { viewState, jsonData, geoJsonData } = useSelector(
+    (state: RootState) => state.serviceMapReducer
+  );
 
   useEffect(() => {
-    if (buildingData) {
+    if (geoJsonData.status.code !== 'Uninitialized') {
       return;
     }
 
@@ -147,49 +86,47 @@ const ServiceMap: React.FC<Props & LayerProps> = (
         }
       ].filter(Boolean) as { file: string; type: ServiceType }[];
 
-      geojsonApi(files, setBuildingData, "geojson");
+      dispatch(fetchMedicalServicesBuildingData(files));
     }
-  }, [props.layerType, buildingData]);
+  }, [props.layerType, geoJsonData.status.code, dispatch]);
 
   useEffect(() => {
-    api(props.services, setPointData);
-  }, [props.services]);
+    dispatch(fetchMedicalServicesData(props.services));
+  }, [props.services, dispatch]);
 
   useEffect(() => {
     if (props.layerType === LayerType.Extruded) {
-      setViewState(v => ({
-        ...v,
+      dispatch(updateViewState({
         pitch: 45
       }));
     } else {
-      setViewState(v => ({
-        ...v,
+      dispatch(updateViewState({
         pitch: 0
       }));
     }
-  }, [props.layerType]);
+  }, [props.layerType, dispatch]);
 
-  if (!pointData) {
+  if (!jsonData.data) {
     return null;
   }
 
   const layer = getLayer(
-    props.layerType !== LayerType.Extruded ? pointData : buildingData,
+    props.layerType !== LayerType.Extruded ? jsonData.data : geoJsonData.data,
     props
   );
 
-  const handleViewStateChange = ({
+  /* const handleViewStateChange = ({
     viewState,
     interactionState,
     oldViewState
   }: any) => {
-    setViewState(viewState);
-  };
+    dispatch(updateViewState(viewState));
+  }; */
 
   return (
     <DeckGL
-      viewState={viewState}
-      onViewStateChange={handleViewStateChange}
+      initialViewState={viewState}
+      // onViewStateChange={handleViewStateChange}
       controller={true}
       layers={[layer]}
     >
