@@ -106,7 +106,7 @@ const App: React.FC = () => {
           <CardContent>
             <List className={classes.filterList}>
               {Object.values(ServiceType).map(type => (
-                <SwitchListItem serviceType={type} layerType={layerType} />
+                <SwitchListItem key={type} serviceType={type} layerType={layerType} />
               ))}
             </List>
           </CardContent>

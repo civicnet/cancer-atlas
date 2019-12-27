@@ -20,6 +20,8 @@ function getIconSize(size: number) {
 }
 
 export default class IconClusterLayer extends CompositeLayer {
+  static layerName = 'Foobar';
+
   // eslint-disable-next-line
   constructor(props: any) {
     super(props);

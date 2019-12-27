@@ -72,7 +72,7 @@ const SwitchListItem: React.FC<Props> = (props: Props) => {
       : CustomSwitch();
 
   return (
-    <ListItem key={serviceType} classes={{ root: classes.listItemRoot }}>
+    <ListItem classes={{ root: classes.listItemRoot }}>
       <ListItemIcon>
         <Icon
           className={clsx(

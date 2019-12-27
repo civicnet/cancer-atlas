@@ -62,6 +62,7 @@ const LayerPicker: React.FC = () => {
       >
         {Object.entries(layerTypePickerData).map(([key, data]) => (
           <ToggleButton
+            key={key}
             value={key}
             aria-label={key}
             title={data.title}
