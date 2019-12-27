@@ -17,7 +17,7 @@ const INITIAL_VIEW_STATE = {
   pitch: 0
 };
 
-const VERSION = '0.2.0';
+const VERSION = '0.2.1';
 
 export enum ServiceType {
   FamilyMedicine = "family_medicine",
