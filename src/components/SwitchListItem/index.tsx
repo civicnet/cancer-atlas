@@ -46,12 +46,25 @@ const SwitchListItem: React.FC<Props> = (props: Props) => {
   const { services } = useSelector(
     (state: RootState) => state.switchListItemReducer
   );
+  const { jsonData } = useSelector(
+    (state: RootState) => state.serviceMapReducer
+  );
 
   const { layerType, serviceType } = props;
 
   const handleToggle = (value: ServiceType) => () => {
     dispatch(toggleServiceType(value));
   };
+
+  const getCountForServiceType = (service: ServiceType) => {
+    return jsonData.data.reduce((acc, serviceData) => {
+      if (serviceData.type !== service) {
+        return acc;
+      }
+
+      return acc+1;
+    }, 0)
+  }
 
   const ServiceSwitch =
     layerType === LayerType.ScatterPlot
@@ -71,6 +84,7 @@ const SwitchListItem: React.FC<Props> = (props: Props) => {
       <ListItemText
         id="switch-list-label-wifi"
         primary={ServiceTypeReadable[serviceType]}
+        secondary={getCountForServiceType(serviceType)}
       />
       <ListItemSecondaryAction>
         <ServiceSwitch

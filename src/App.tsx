@@ -84,7 +84,6 @@ const App: React.FC = () => {
   }, []);
 
   const onServiceHover = (obj: ServiceObject) => {
-    console.log(obj);
     setTooltip(obj);
   };
 
