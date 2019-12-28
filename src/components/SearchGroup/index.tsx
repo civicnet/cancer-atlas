@@ -14,8 +14,11 @@ import clsx from "clsx";
 import { ServiceType } from "../ServiceMap";
 import SwitchListItem from "../SwitchListItem";
 import SearchIcon from "@material-ui/icons/Search";
-import { useDispatch } from "react-redux";
-import { setQuery } from "./SearchGroupSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { setQuery, performQuery } from "./SearchGroupSlice";
+import { RootState } from "../../store/rootReducer";
+import debounce from "debounce";
+import { MedicalServiceData } from "../ServiceMap/ServiceMapSlice";
 
 const useStyles = makeStyles(theme => ({
   search: {
@@ -85,12 +88,28 @@ const SearchGroup: React.FC = () => {
 
   const dispatch = useDispatch();
 
+  const { jsonData } = useSelector(
+    (state: RootState) => state.serviceMapReducer
+  );
+
   const toggleFilters = () => {
     setIsFilterOpen(!isFilterOpen);
   };
 
+  const debouncedQuery = debounce(
+    (data: MedicalServiceData[]) => dispatch(performQuery(data)),
+    250
+  );
   const handleChangeQuery = (ev: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(setQuery(ev.target.value));
+    debouncedQuery(jsonData.data);
+  };
+
+  const handleSubmitQuery = (ev: React.KeyboardEvent<HTMLInputElement>) => {
+    if (ev.keyCode === 13) {
+      debouncedQuery.clear();
+      dispatch(performQuery(jsonData.data));
+    }
   };
 
   return (
@@ -105,6 +124,7 @@ const SearchGroup: React.FC = () => {
           input: classes.inputInput
         }}
         onChange={handleChangeQuery}
+        onKeyDown={handleSubmitQuery}
         inputProps={{ "aria-label": "search" }}
       />
       <IconButton

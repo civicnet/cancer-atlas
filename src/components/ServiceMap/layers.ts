@@ -5,7 +5,6 @@ import { ScreenGridLayer } from "@deck.gl/aggregation-layers";
 import { GeoJsonLayer } from "@deck.gl/layers";
 
 import chroma from "chroma-js";
-import Fuse from "fuse.js";
 
 import { LayerType } from "../LayerPicker/LayerPickerSlice";
 import IconClusterLayer from "../IconClusterLayer";
@@ -19,37 +18,7 @@ export const getAggregateColorRange = () => [
   chroma("#FFC300").rgb()
 ];
 
-const filteredFields = [
-  "address",
-  "contractNo",
-  "email",
-  "medicName",
-  "phone",
-  "supplierName",
-  "specialty"
-];
-
-interface LayerFilters {
-  query?: string;
-}
-
-export const getLayer = (
-  data: any[],
-  props: LayerProps,
-  filters: LayerFilters
-) => {
-  if (filters.query) {
-    const searchOptions = {
-      threshold: 0.2,
-      tokenize: true,
-      maxPatternLength: 32,
-      minMatchCharLength: 3,
-      keys: filteredFields
-    };
-    const fuse = new Fuse(data, searchOptions); // "list" is the item array
-    data = fuse.search(filters.query);
-  }
-
+export const getLayer = (data: any[], props: LayerProps) => {
   switch (props.layerType) {
     case LayerType.ScatterPlot:
       return getScatterplot(data, props);
@@ -82,7 +51,7 @@ const getScatterplot = (pointData: any, props: LayerProps) => {
     getRadius: 12,
     getFillColor: (d: any) =>
       chroma(ServiceTypeColorMap[d.type as ServiceType]).rgb(),
-    getLineColor: [0, 0, 0],
+    getLineColor: [0, 0, 0, 100],
     onHover: (d: any) => props.onHover(d.object),
     onClick: (d: any) => props.onClick(d.object)
   });
@@ -96,7 +65,7 @@ const getIcon = (pointData: any, props: LayerProps) => {
     iconMapping: "data/location-icon-mapping.json",
     iconAtlas: "data/location-icon-atlas.png",
     sizeScale: 30,
-    getIcon: (d: any) => "marker",
+    // getIcon: "marker",
     pickable: true
     // onHover: (d: any) => props.onHover(d.object),
     // onClick: (d: any) => props.onClick(d.object)
@@ -119,11 +88,8 @@ const getGrid = (pointData: any, props: LayerProps) => {
   return new ScreenGridLayer({
     id: "ScreenGridLayer",
     data: pointData,
-    // cellSize: 25,
     colorRange: getAggregateColorRange(),
     cellSizePixels: 15,
-    // colorAggregation: "count",
-    // sizeAggregation: "count",
     aggregation: "SUM",
     coverage: 0.9,
     opacity: 0.7,

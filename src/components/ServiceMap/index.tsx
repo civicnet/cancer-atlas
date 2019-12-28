@@ -75,7 +75,9 @@ const ServiceMap: React.FC<Props & LayerProps> = (
   const { viewState, jsonData, geoJsonData } = useSelector(
     (state: RootState) => state.serviceMapReducer
   );
-  const { query } = useSelector((state: RootState) => state.searchGroupReducer);
+  const { searchResults } = useSelector(
+    (state: RootState) => state.searchGroupReducer
+  );
 
   useEffect(() => {
     if (geoJsonData.status.code !== "Uninitialized") {
@@ -118,12 +120,10 @@ const ServiceMap: React.FC<Props & LayerProps> = (
     return null;
   }
 
+  const displayedData = searchResults.length ? searchResults : jsonData.data;
   const layer = getLayer(
-    props.layerType !== LayerType.Extruded ? jsonData.data : geoJsonData.data,
-    props,
-    {
-      query
-    }
+    props.layerType !== LayerType.Extruded ? displayedData : geoJsonData.data,
+    props
   );
 
   /* const handleViewStateChange = ({
