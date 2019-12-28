@@ -78,6 +78,9 @@ const ServiceMap: React.FC<Props & LayerProps> = (
   const { searchResults } = useSelector(
     (state: RootState) => state.searchGroupReducer
   );
+  const { services } = useSelector(
+    (state: RootState) => state.switchListItemReducer
+  );
 
   useEffect(() => {
     if (geoJsonData.status.code !== "Uninitialized") {
@@ -97,8 +100,8 @@ const ServiceMap: React.FC<Props & LayerProps> = (
   }, [props.layerType, geoJsonData.status.code, dispatch]);
 
   useEffect(() => {
-    dispatch(fetchMedicalServicesData(props.services));
-  }, [props.services, dispatch]);
+    dispatch(fetchMedicalServicesData(Object.values(ServiceType)));
+  }, [dispatch]);
 
   useEffect(() => {
     if (props.layerType === LayerType.Extruded) {
@@ -120,27 +123,20 @@ const ServiceMap: React.FC<Props & LayerProps> = (
     return null;
   }
 
-  const displayedData = searchResults.length ? searchResults : jsonData.data;
+  let displayedData = searchResults.length ? searchResults : jsonData.data;
+  displayedData = displayedData.filter(data => {
+    if (services.includes(data.type)) {
+      return true;
+    }
+    return false;
+  });
   const layer = getLayer(
     props.layerType !== LayerType.Extruded ? displayedData : geoJsonData.data,
     props
   );
 
-  /* const handleViewStateChange = ({
-    viewState,
-    interactionState,
-    oldViewState
-  }: any) => {
-    dispatch(updateViewState(viewState));
-  }; */
-
   return (
-    <DeckGL
-      initialViewState={viewState}
-      // onViewStateChange={handleViewStateChange}
-      controller={true}
-      layers={[layer]}
-    >
+    <DeckGL initialViewState={viewState} controller={true} layers={[layer]}>
       <StaticMap
         key="static_map"
         width="100%"
