@@ -10,9 +10,9 @@ import {
   ListItemSecondaryAction
 } from "@material-ui/core";
 
-import { useSelector, useDispatch } from 'react-redux'
-import { RootState } from '../../store/rootReducer'
-import { toggleServiceType } from './SwitchListItemSlice';
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../../store/rootReducer";
+import { toggleServiceType } from "./SwitchListItemSlice";
 
 import {
   ServiceType,
@@ -31,15 +31,14 @@ const useStyles = makeStyles(_ => ({
   },
   listItemRoot: {
     paddingLeft: 0
-  },
+  }
 }));
 
 interface Props {
   serviceType: ServiceType;
-  layerType: LayerType;
 }
 
-const SwitchListItem: React.FC<Props> = (props: Props) => {
+const SwitchListItem: React.FC<Props> = props => {
   const classes = useStyles();
 
   const dispatch = useDispatch();
@@ -49,8 +48,11 @@ const SwitchListItem: React.FC<Props> = (props: Props) => {
   const { jsonData } = useSelector(
     (state: RootState) => state.serviceMapReducer
   );
+  const { layerType } = useSelector(
+    (state: RootState) => state.layerPickerReducer
+  );
 
-  const { layerType, serviceType } = props;
+  const { serviceType } = props;
 
   const handleToggle = (value: ServiceType) => () => {
     dispatch(toggleServiceType(value));
@@ -62,9 +64,9 @@ const SwitchListItem: React.FC<Props> = (props: Props) => {
         return acc;
       }
 
-      return acc+1;
-    }, 0)
-  }
+      return acc + 1;
+    }, 0);
+  };
 
   const ServiceSwitch =
     layerType === LayerType.ScatterPlot
@@ -75,10 +77,7 @@ const SwitchListItem: React.FC<Props> = (props: Props) => {
     <ListItem classes={{ root: classes.listItemRoot }}>
       <ListItemIcon>
         <Icon
-          className={clsx(
-            classes.serviceIcon,
-            ServiceTypeIcons[serviceType]
-          )}
+          className={clsx(classes.serviceIcon, ServiceTypeIcons[serviceType])}
         />
       </ListItemIcon>
       <ListItemText
@@ -102,7 +101,6 @@ const SwitchListItem: React.FC<Props> = (props: Props) => {
       </ListItemSecondaryAction>
     </ListItem>
   );
-
 };
 
 export default SwitchListItem;

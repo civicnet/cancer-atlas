@@ -2,14 +2,9 @@ import React from "react";
 
 import { loadCSS } from "fg-loadcss";
 
-import ServiceMap, {
-  ServiceType,
-  ServiceObject
-} from "./components/ServiceMap";
+import ServiceMap, { ServiceObject } from "./components/ServiceMap";
 
 import { makeStyles } from "@material-ui/core/styles";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
 import {
   List,
   CssBaseline,
@@ -22,8 +17,6 @@ import {
   ListItemIcon,
   ListItemText,
   useTheme,
-  fade,
-  InputBase,
   Badge,
   Icon,
   Popover,
@@ -35,18 +28,17 @@ import MailIcon from "@material-ui/icons/Mail";
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
-import SearchIcon from "@material-ui/icons/Search";
 
 import { useSelector } from "react-redux";
 import { RootState } from "./store/rootReducer";
 
 import Tooltip from "./components/Tooltip";
-import SwitchListItem from "./components/SwitchListItem";
 import LayerPicker from "./components/LayerPicker";
 import Legend from "./components/Legend";
 import clsx from "clsx";
 import Logo from "./components/Logo";
 import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
+import SearchGroup from "./components/SearchGroup";
 
 const drawerWidth = 240;
 export const APP_BAR_COLOR = "#222f3e";
@@ -60,7 +52,6 @@ const useStyles = makeStyles(theme => ({
     minWidth: 345,
     maxWidth: 345
   },
-  filterList: {},
   bullet: {
     display: "inline-block",
     margin: "0 2px",
@@ -130,41 +121,6 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0, 1),
     ...theme.mixins.toolbar
   },
-  search: {
-    position: "relative",
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.common.white, 0.15),
-    "&:hover": {
-      backgroundColor: fade(theme.palette.common.white, 0.25)
-    },
-    marginRight: theme.spacing(2),
-    marginLeft: 0,
-    width: "100%",
-    [theme.breakpoints.up("sm")]: {
-      marginLeft: theme.spacing(3),
-      width: "auto"
-    }
-  },
-  searchIcon: {
-    width: theme.spacing(7),
-    height: "100%",
-    position: "absolute",
-    pointerEvents: "none",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  inputRoot: {
-    color: "inherit"
-  },
-  inputInput: {
-    padding: theme.spacing(1, 1, 1, 7),
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("md")]: {
-      width: 325
-    }
-  },
   toolbarIcons: {
     display: "flex"
   },
@@ -181,30 +137,6 @@ const useStyles = makeStyles(theme => ({
     bottom: 20,
     right: 20,
     zIndex: 1
-  },
-  filterOpen: {
-    transition: theme.transitions.create("max-height", {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen
-    }),
-    maxHeight: 345
-  },
-  filterClose: {
-    maxHeight: 0,
-    overflowY: "hidden",
-    transition: theme.transitions.create("max-height", {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen
-    })
-  },
-  filterCard: {
-    width: 350,
-    right: 0,
-    position: "absolute",
-    paddingBottom: 0
-  },
-  filterCardContent: {
-    paddingBottom: 0
   }
 }));
 
@@ -213,7 +145,6 @@ const App: React.FC = () => {
   const theme = useTheme();
 
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
-  const [isFilterOpen, setIsFilterOpen] = React.useState(false);
 
   const handleDrawerOpen = () => {
     setIsDrawerOpen(true);
@@ -221,10 +152,6 @@ const App: React.FC = () => {
 
   const handleDrawerClose = () => {
     setIsDrawerOpen(false);
-  };
-
-  const toggleFilters = () => {
-    setIsFilterOpen(!isFilterOpen);
   };
 
   const [tooltip, setTooltip] = React.useState();
@@ -278,49 +205,7 @@ const App: React.FC = () => {
             <MenuIcon style={{ color: "#fff" }} />
           </IconButton>
           <Logo />
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
-            </div>
-            <InputBase
-              placeholder="Cauta servicii medicale (ex: pneumolog)"
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput
-              }}
-              inputProps={{ "aria-label": "search" }}
-            />
-            <IconButton
-              aria-label="filtreaza"
-              color="inherit"
-              onClick={toggleFilters}
-            >
-              <Badge badgeContent={0} color="secondary">
-                <Icon className="far fa-filter" style={{ fontSize: 16 }} />
-              </Badge>
-            </IconButton>
-            <Card
-              className={clsx(classes.filterCard, {
-                [classes.filterOpen]: isFilterOpen,
-                [classes.filterClose]: !isFilterOpen
-              })}
-            >
-              <CardContent
-                classes={{ root: classes.filterCardContent }}
-                style={{ paddingBottom: 0 }}
-              >
-                <List className={classes.filterList} dense={true}>
-                  {Object.values(ServiceType).map(type => (
-                    <SwitchListItem
-                      key={type}
-                      serviceType={type}
-                      layerType={layerType}
-                    />
-                  ))}
-                </List>
-              </CardContent>
-            </Card>
-          </div>
+          <SearchGroup />
           <div className={classes.grow} />
           <div className={classes.toolbarIcons}>
             <PopupState variant="popover" popupId="demo-popup-popover">

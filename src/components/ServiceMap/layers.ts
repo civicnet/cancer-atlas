@@ -5,6 +5,8 @@ import { ScreenGridLayer } from "@deck.gl/aggregation-layers";
 import { GeoJsonLayer } from "@deck.gl/layers";
 
 import chroma from "chroma-js";
+import Fuse from "fuse.js";
+
 import { LayerType } from "../LayerPicker/LayerPickerSlice";
 import IconClusterLayer from "../IconClusterLayer";
 
@@ -17,7 +19,37 @@ export const getAggregateColorRange = () => [
   chroma("#FFC300").rgb()
 ];
 
-export const getLayer = (data: any, props: LayerProps) => {
+const filteredFields = [
+  "address",
+  "contractNo",
+  "email",
+  "medicName",
+  "phone",
+  "supplierName",
+  "specialty"
+];
+
+interface LayerFilters {
+  query?: string;
+}
+
+export const getLayer = (
+  data: any[],
+  props: LayerProps,
+  filters: LayerFilters
+) => {
+  if (filters.query) {
+    const searchOptions = {
+      threshold: 0.2,
+      tokenize: true,
+      maxPatternLength: 32,
+      minMatchCharLength: 3,
+      keys: filteredFields
+    };
+    const fuse = new Fuse(data, searchOptions); // "list" is the item array
+    data = fuse.search(filters.query);
+  }
+
   switch (props.layerType) {
     case LayerType.ScatterPlot:
       return getScatterplot(data, props);
@@ -61,11 +93,11 @@ const getIcon = (pointData: any, props: LayerProps) => {
     id: "IconLayer",
     data: pointData,
     getPosition: (d: any) => [d.lng, d.lat],
-    iconMapping: 'data/location-icon-mapping.json',
-    iconAtlas: 'data/location-icon-atlas.png',
+    iconMapping: "data/location-icon-mapping.json",
+    iconAtlas: "data/location-icon-atlas.png",
     sizeScale: 30,
-    getIcon: (d: any) => 'marker',
-    pickable: true,
+    getIcon: (d: any) => "marker",
+    pickable: true
     // onHover: (d: any) => props.onHover(d.object),
     // onClick: (d: any) => props.onClick(d.object)
   });
@@ -79,7 +111,7 @@ const getHeatmap = (pointData: any, props: LayerProps) => {
     opacity: 0.75,
     getPosition: (d: any) => [d.lng, d.lat],
     radiusPixels: 80,
-    intensity: 1,
+    intensity: 1
   });
 };
 

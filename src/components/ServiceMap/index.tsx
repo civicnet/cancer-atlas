@@ -6,7 +6,11 @@ import { getLayer } from "./layers";
 import { LayerType } from "../LayerPicker/LayerPickerSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/rootReducer";
-import { updateViewState, fetchMedicalServicesData, fetchMedicalServicesBuildingData } from './ServiceMapSlice';
+import {
+  updateViewState,
+  fetchMedicalServicesData,
+  fetchMedicalServicesBuildingData
+} from "./ServiceMapSlice";
 
 export enum ServiceType {
   FamilyMedicine = "family_medicine",
@@ -67,14 +71,14 @@ interface Props {
 const ServiceMap: React.FC<Props & LayerProps> = (
   props: Props & LayerProps
 ) => {
-
   const dispatch = useDispatch();
   const { viewState, jsonData, geoJsonData } = useSelector(
     (state: RootState) => state.serviceMapReducer
   );
+  const { query } = useSelector((state: RootState) => state.searchGroupReducer);
 
   useEffect(() => {
-    if (geoJsonData.status.code !== 'Uninitialized') {
+    if (geoJsonData.status.code !== "Uninitialized") {
       return;
     }
 
@@ -96,13 +100,17 @@ const ServiceMap: React.FC<Props & LayerProps> = (
 
   useEffect(() => {
     if (props.layerType === LayerType.Extruded) {
-      dispatch(updateViewState({
-        pitch: 45
-      }));
+      dispatch(
+        updateViewState({
+          pitch: 45
+        })
+      );
     } else {
-      dispatch(updateViewState({
-        pitch: 0
-      }));
+      dispatch(
+        updateViewState({
+          pitch: 0
+        })
+      );
     }
   }, [props.layerType, dispatch]);
 
@@ -112,7 +120,10 @@ const ServiceMap: React.FC<Props & LayerProps> = (
 
   const layer = getLayer(
     props.layerType !== LayerType.Extruded ? jsonData.data : geoJsonData.data,
-    props
+    props,
+    {
+      query
+    }
   );
 
   /* const handleViewStateChange = ({
