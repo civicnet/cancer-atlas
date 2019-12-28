@@ -1,11 +1,12 @@
 import { ServiceType } from "../components/ServiceMap";
+import oboe from "oboe";
 
-const VERSION = '0.2.4';
+const VERSION = "0.2.4";
 
 // TODO: Unify these two
 export const fetchJSON = async (
   files: ServiceType[],
-  cb: (data: any) => void,
+  cb: (data: any) => void
 ) => {
   const type = "json";
   const responses = files.map(file =>
@@ -31,7 +32,7 @@ export const fetchJSON = async (
 
 export const fetchGeoJSON = async (
   files: { file: string; type: ServiceType }[],
-  cb: (data: any) => void,
+  cb: (data: any) => void
 ) => {
   const type = "geojson";
   const responses = files.map(({ file }) =>
@@ -52,5 +53,20 @@ export const fetchGeoJSON = async (
   Promise.all(responses).then(results => {
     const allServices = [].concat.apply([], results);
     cb(allServices);
+  });
+};
+
+export const streamJSON = (files: ServiceType[], cb: (data: any) => void) => {
+  const type = "json";
+  files.map(file => {
+    oboe(
+      `https://cdn.jsdelivr.net/gh/civicnet/cancer-atlas-scripts@${VERSION}/data/${type}/national/${file}.${type}`
+    )
+      .done(function(things) {
+        cb(things);
+      })
+      .fail(function() {
+        console.log("fail oboe");
+      });
   });
 };

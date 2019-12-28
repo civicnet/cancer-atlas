@@ -4,14 +4,14 @@ import About from "../containers/About";
 
 const routes = [
   {
-    path: "/",
+    path: "/cancer-atlas",
     exact: true,
     main: () => null,
     icon: <Icon className="fas fa-map-marker-alt" />,
     text: "Atlas"
   },
   {
-    path: "/despre",
+    path: "/cancer-atlas/despre",
     main: () => <About />,
     icon: <Icon className="fas fa-info-circle" />,
     text: "Despre"
