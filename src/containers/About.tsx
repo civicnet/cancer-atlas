@@ -1,10 +1,10 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core";
 import Container from "./Container";
-import BrandingCard from "../components/BrandingCard";
+import BrandingCard from "../components/InfoCard";
 
 const useStyles = makeStyles(theme => ({
-  brandingCard: {
+  infoCard: {
     width: 350
   }
 }));
@@ -14,7 +14,7 @@ const About: React.FC = () => {
 
   return (
     <Container>
-      <BrandingCard className={classes.brandingCard} />
+      <BrandingCard className={classes.infoCard} />
     </Container>
   );
 };

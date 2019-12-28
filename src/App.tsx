@@ -33,6 +33,7 @@ import SearchGroup from "./components/SearchGroup";
 import routes from "./routes";
 
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import Atlas from "./containers/Atlas";
 
 const drawerWidth = 240;
 export const APP_BAR_COLOR = "#222f3e";
@@ -310,6 +311,7 @@ const App: React.FC = () => {
         </List>
       </Drawer>
       <main>
+        <Atlas />
         <Switch>
           {routes.map((route, index) => (
             <Route

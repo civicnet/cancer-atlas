@@ -4,7 +4,6 @@ import { useSelector } from "react-redux";
 import { RootState } from "../store/rootReducer";
 import ServiceMap, { ServiceObject } from "../components/ServiceMap";
 import Tooltip from "../components/Tooltip";
-import Container from "./Container";
 import LayerPicker from "../components/LayerPicker";
 import Legend from "../components/Legend";
 
@@ -56,7 +55,7 @@ const Atlas: React.FC = () => {
   };
 
   return (
-    <Container>
+    <>
       <LayerPicker className={classes.layerPicker} />
       <Legend
         style={{
@@ -77,7 +76,7 @@ const Atlas: React.FC = () => {
         onClick={onServiceClick}
         layerType={layerType}
       />
-    </Container>
+    </>
   );
 };
 

@@ -4,9 +4,10 @@ import clsx from "clsx";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    paddingTop: 90,
-    paddingLeft: 100,
-    paddingRight: theme.spacing(3)
+    top: 90,
+    left: 100,
+    position: "absolute",
+    zIndex: 2
   }
 }));
 

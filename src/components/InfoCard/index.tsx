@@ -14,7 +14,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../store/rootReducer";
 
 import clsx from "clsx";
-import { toggleBrandingCardExpansion } from "./BrandingCardSlice";
+import { toggleInfoCardExpansion } from "./InfoCardSlice";
 import { ComponentWithInheritedProps } from "../../types/CommonComponentProps";
 
 const useStyles = makeStyles(theme => ({
@@ -33,16 +33,14 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const BrandingCard: React.FC<ComponentWithInheritedProps> = props => {
+const InfoCard: React.FC<ComponentWithInheritedProps> = props => {
   const classes = useStyles();
 
   const dispatch = useDispatch();
-  const { expanded } = useSelector(
-    (state: RootState) => state.brandingCardReducer
-  );
+  const { expanded } = useSelector((state: RootState) => state.infoCardReducer);
 
   const handleExpandClick = () => {
-    dispatch(toggleBrandingCardExpansion());
+    dispatch(toggleInfoCardExpansion());
   };
 
   return (
@@ -115,4 +113,4 @@ const BrandingCard: React.FC<ComponentWithInheritedProps> = props => {
   );
 };
 
-export default BrandingCard;
+export default InfoCard;
