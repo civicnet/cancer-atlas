@@ -42,11 +42,15 @@ const SwitchListItem: React.FC<Props> = props => {
   const classes = useStyles();
 
   const dispatch = useDispatch();
+
   const { services } = useSelector(
     (state: RootState) => state.switchListItemReducer
   );
   const { jsonData } = useSelector(
     (state: RootState) => state.serviceMapReducer
+  );
+  const { searchResults } = useSelector(
+    (state: RootState) => state.searchGroupReducer
   );
   const { layerType } = useSelector(
     (state: RootState) => state.layerPickerReducer
@@ -58,14 +62,19 @@ const SwitchListItem: React.FC<Props> = props => {
     dispatch(toggleServiceType(value));
   };
 
-  const getCountForServiceType = (service: ServiceType) => {
-    return jsonData.data.reduce((acc, serviceData) => {
+  const getCountFromDataArray = (data: any[], service: ServiceType) => {
+    return data.reduce((acc, serviceData) => {
       if (serviceData.type !== service) {
         return acc;
       }
 
       return acc + 1;
     }, 0);
+  };
+
+  const getCountForServiceType = (service: ServiceType) => {
+    const data = searchResults.length ? searchResults : jsonData.data;
+    return getCountFromDataArray(data, service);
   };
 
   const ServiceSwitch =
@@ -81,9 +90,11 @@ const SwitchListItem: React.FC<Props> = props => {
         />
       </ListItemIcon>
       <ListItemText
-        id="switch-list-label-wifi"
+        id={ServiceTypeReadable[serviceType]}
         primary={ServiceTypeReadable[serviceType]}
-        secondary={getCountForServiceType(serviceType)}
+        secondary={`${getCountForServiceType(
+          serviceType
+        )} / ${getCountFromDataArray(jsonData.data, serviceType)}`}
       />
       <ListItemSecondaryAction>
         <ServiceSwitch
@@ -95,7 +106,7 @@ const SwitchListItem: React.FC<Props> = props => {
             layerType !== LayerType.Extruded
           }
           inputProps={{
-            "aria-labelledby": "switch-list-label-wifi"
+            "aria-labelledby": ServiceTypeReadable[serviceType]
           }}
         />
       </ListItemSecondaryAction>
