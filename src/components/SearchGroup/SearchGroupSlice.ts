@@ -31,7 +31,6 @@ const searchGroupSlice = createSlice({
     // TODO: This needs to be typed
     performQuery(state, action: PayloadAction<any[]>) {
       if (state.query.length < 3) {
-        state.query = "";
         state.searchResults = [];
         return;
       }
@@ -46,7 +45,6 @@ const searchGroupSlice = createSlice({
       };
       const fuse = new Fuse(action.payload, searchOptions);
       state.searchResults = fuse.search(state.query);
-      state.query = "";
     }
   }
 });

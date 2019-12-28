@@ -8,7 +8,8 @@ import {
   Icon,
   Card,
   CardContent,
-  List
+  List,
+  Typography
 } from "@material-ui/core";
 import clsx from "clsx";
 import { ServiceType } from "../ServiceMap";
@@ -91,6 +92,9 @@ const SearchGroup: React.FC = () => {
   const { jsonData } = useSelector(
     (state: RootState) => state.serviceMapReducer
   );
+  const { searchResults, query } = useSelector(
+    (state: RootState) => state.searchGroupReducer
+  );
 
   const toggleFilters = () => {
     setIsFilterOpen(!isFilterOpen);
@@ -116,47 +120,54 @@ const SearchGroup: React.FC = () => {
   };
 
   return (
-    <div className={classes.search}>
-      <div className={classes.searchIcon}>
-        <SearchIcon />
-      </div>
-      <InputBase
-        placeholder="Cauta servicii medicale (ex: radiologie)"
-        classes={{
-          root: classes.inputRoot,
-          input: classes.inputInput
-        }}
-        onChange={handleChangeQuery}
-        onKeyDown={handleSubmitQuery}
-        inputProps={{ "aria-label": "search" }}
-      />
-      <IconButton
-        aria-label="filtreaza"
-        color="inherit"
-        onClick={toggleFilters}
-      >
-        <Badge badgeContent={0} color="secondary">
-          <Icon className="far fa-filter" style={{ fontSize: 16 }} />
-        </Badge>
-      </IconButton>
-      <Card
-        className={clsx(classes.filterCard, {
-          [classes.filterOpen]: isFilterOpen,
-          [classes.filterClose]: !isFilterOpen
-        })}
-      >
-        <CardContent
-          classes={{ root: classes.filterCardContent }}
-          style={{ paddingBottom: 0 }}
+    <>
+      <div className={classes.search}>
+        <div className={classes.searchIcon}>
+          <SearchIcon />
+        </div>
+        <InputBase
+          placeholder="Cauta servicii medicale (ex: radiologie)"
+          classes={{
+            root: classes.inputRoot,
+            input: classes.inputInput
+          }}
+          onChange={handleChangeQuery}
+          onKeyDown={handleSubmitQuery}
+          inputProps={{ "aria-label": "search" }}
+        />
+        <IconButton
+          aria-label="filtreaza"
+          color="inherit"
+          onClick={toggleFilters}
         >
-          <List dense={true}>
-            {Object.values(ServiceType).map(type => (
-              <SwitchListItem key={type} serviceType={type} />
-            ))}
-          </List>
-        </CardContent>
-      </Card>
-    </div>
+          <Badge badgeContent={0} color="secondary">
+            <Icon className="far fa-filter" style={{ fontSize: 16 }} />
+          </Badge>
+        </IconButton>
+        <Card
+          className={clsx(classes.filterCard, {
+            [classes.filterOpen]: isFilterOpen,
+            [classes.filterClose]: !isFilterOpen
+          })}
+        >
+          <CardContent
+            classes={{ root: classes.filterCardContent }}
+            style={{ paddingBottom: 0 }}
+          >
+            <List dense={true}>
+              {Object.values(ServiceType).map(type => (
+                <SwitchListItem key={type} serviceType={type} />
+              ))}
+            </List>
+          </CardContent>
+        </Card>
+      </div>
+      {query.length > 3 && (
+        <Typography style={{ fontSize: 12, fontStyle: "italic", opacity: 0.7 }}>
+          {searchResults.length} rezultate pentru "{query}"
+        </Typography>
+      )}
+    </>
   );
 };
 

@@ -15,7 +15,6 @@ const useStyles = makeStyles(theme => ({
     lineHeight: "14px",
     textTransform: "uppercase",
     position: "relative",
-    // paddingRight: 28,
     paddingLeft: 8,
     zIndex: 2,
     background: APP_BAR_COLOR
