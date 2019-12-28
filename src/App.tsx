@@ -2,8 +2,6 @@ import React from "react";
 
 import { loadCSS } from "fg-loadcss";
 
-import ServiceMap, { ServiceObject } from "./components/ServiceMap";
-
 import { makeStyles } from "@material-ui/core/styles";
 import {
   List,
@@ -23,35 +21,23 @@ import {
   Box,
   Typography
 } from "@material-ui/core";
-import InboxIcon from "@material-ui/icons/MoveToInbox";
-import MailIcon from "@material-ui/icons/Mail";
+
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 
-import { useSelector } from "react-redux";
-import { RootState } from "./store/rootReducer";
-
-import Tooltip from "./components/Tooltip";
-import LayerPicker from "./components/LayerPicker";
-import Legend from "./components/Legend";
 import clsx from "clsx";
 import Logo from "./components/Logo";
 import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
 import SearchGroup from "./components/SearchGroup";
+import routes from "./routes";
+
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 const drawerWidth = 240;
 export const APP_BAR_COLOR = "#222f3e";
 
 const useStyles = makeStyles(theme => ({
-  tooltipContainer: {
-    zIndex: 10,
-    position: "absolute",
-    top: 20,
-    right: 20,
-    minWidth: 345,
-    maxWidth: 345
-  },
   bullet: {
     display: "inline-block",
     margin: "0 2px",
@@ -96,6 +82,9 @@ const useStyles = makeStyles(theme => ({
     flexShrink: 0,
     whiteSpace: "nowrap"
   },
+  drawerPaper: {
+    // backgroundColor: APP_BAR_COLOR
+  },
   drawerOpen: {
     width: drawerWidth,
     transition: theme.transitions.create("width", {
@@ -127,16 +116,10 @@ const useStyles = makeStyles(theme => ({
   grow: {
     flexGrow: 1
   },
-  layerPicker: {
-    display: "flex",
-    flexDirection: "column",
-    flex: 1,
-    marginTop: 20,
-    backgroundColor: "transparent",
-    position: "absolute",
-    bottom: 20,
-    right: 20,
-    zIndex: 1
+  menuItem: {
+    // color: "#FFF",
+    // fontWeight: "bold",
+    // opacity: 0.7
   }
 }));
 
@@ -154,16 +137,6 @@ const App: React.FC = () => {
     setIsDrawerOpen(false);
   };
 
-  const [tooltip, setTooltip] = React.useState();
-  const [pinnedTooltip, setPinnedTooltip] = React.useState();
-
-  const { services } = useSelector(
-    (state: RootState) => state.switchListItemReducer
-  );
-  const { layerType } = useSelector(
-    (state: RootState) => state.layerPickerReducer
-  );
-
   React.useEffect(() => {
     loadCSS(
       "https://pro.fontawesome.com/releases/v5.10.1/css/all.css",
@@ -171,20 +144,8 @@ const App: React.FC = () => {
     );
   }, []);
 
-  const onServiceHover = (obj: ServiceObject) => {
-    setTooltip(obj);
-  };
-
-  const onServiceClick = (obj: ServiceObject) => {
-    setPinnedTooltip(obj);
-  };
-
-  const unpinTooltip = () => {
-    setPinnedTooltip(null);
-  };
-
   return (
-    <div>
+    <Router>
       <CssBaseline />
       <AppBar
         position="fixed"
@@ -312,7 +273,7 @@ const App: React.FC = () => {
           [classes.drawerClose]: !isDrawerOpen
         })}
         classes={{
-          paper: clsx({
+          paper: clsx(classes.drawerPaper, {
             [classes.drawerOpen]: isDrawerOpen,
             [classes.drawerClose]: !isDrawerOpen
           })
@@ -329,50 +290,38 @@ const App: React.FC = () => {
         </div>
         <Divider />
         <List>
-          {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+          {routes.map(route => (
+            <ListItem
+              button
+              key={route.text}
+              component={Link}
+              to={route.path}
+              className={classes.menuItem}
+            >
+              <ListItemIcon
+                style={{ marginLeft: 12 }}
+                className={classes.menuItem}
+              >
+                {route.icon}
               </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-        <List>
-          {["All mail", "Trash", "Spam"].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
+              <ListItemText primary={route.text} />
             </ListItem>
           ))}
         </List>
       </Drawer>
-      <LayerPicker className={classes.layerPicker} />
-      <Legend
-        style={{
-          position: "absolute",
-          left: 96,
-          bottom: 20,
-          zIndex: 1,
-          width: 150
-        }}
-      />
-      <div className={classes.tooltipContainer}>
-        {<Tooltip service={pinnedTooltip} onClose={unpinTooltip} />}
-        {<Tooltip service={tooltip} style={{ marginTop: 20 }} />}
-      </div>
       <main>
-        <ServiceMap
-          services={services}
-          onHover={onServiceHover}
-          onClick={onServiceClick}
-          layerType={layerType}
-        />
+        <Switch>
+          {routes.map((route, index) => (
+            <Route
+              key={index}
+              path={route.path}
+              exact={route.exact}
+              children={<route.main />}
+            />
+          ))}
+        </Switch>
       </main>
-    </div>
+    </Router>
   );
 };
 

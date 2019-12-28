@@ -4,11 +4,7 @@ import {
   Card,
   CardContent,
   Typography,
-  Icon,
   CardActions,
-  Button,
-  Popover,
-  Box,
   IconButton,
   Collapse
 } from "@material-ui/core";
@@ -18,33 +14,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../store/rootReducer";
 
 import clsx from "clsx";
-import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
 import { toggleBrandingCardExpansion } from "./BrandingCardSlice";
-import Logo from "../Logo";
+import { ComponentWithInheritedProps } from "../../types/CommonComponentProps";
 
 const useStyles = makeStyles(theme => ({
-  gradientText: {
-    background: "linear-gradient(135deg, #009fff 0%, #ec2f4b 100%)",
-    WebkitBackgroundClip: "text",
-    WebkitTextFillColor: "transparent"
-  },
-  branding: {
-    fontWeight: 900,
-    lineHeight: "32px",
-    textTransform: "uppercase",
-    marginBottom: 12
-  },
-  brandingSymbol: {
-    marginRight: 12,
-    width: "unset"
-  },
   card: {
     width: "100%"
-  },
-  beta: {
-    fontFamily: "Architects Daughter, cursive",
-    fontSize: 14,
-    textTransform: "lowercase"
   },
   expand: {
     transform: "rotate(0deg)",
@@ -58,7 +33,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const BrandingCard: React.FC = () => {
+const BrandingCard: React.FC<ComponentWithInheritedProps> = props => {
   const classes = useStyles();
 
   const dispatch = useDispatch();
@@ -71,7 +46,7 @@ const BrandingCard: React.FC = () => {
   };
 
   return (
-    <Card className={classes.card}>
+    <Card className={clsx(classes.card, props.className)} style={props.style}>
       <CardContent style={{ paddingBottom: 0 }}>
         <Typography variant="body1" component="p">
           Aplicația GPS a{" "}
