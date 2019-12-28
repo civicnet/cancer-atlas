@@ -7,7 +7,8 @@ import {
   ListItemIcon,
   Icon,
   ListItemText,
-  ListItemSecondaryAction
+  ListItemSecondaryAction,
+  Typography
 } from "@material-ui/core";
 
 import { useSelector, useDispatch } from "react-redux";
@@ -82,6 +83,9 @@ const SwitchListItem: React.FC<Props> = props => {
       ? CustomSwitch(ServiceTypeColorMap[serviceType])
       : CustomSwitch();
 
+  const isChecked =
+    services.indexOf(serviceType) !== -1 && layerType !== LayerType.Extruded;
+
   return (
     <ListItem classes={{ root: classes.listItemRoot }}>
       <ListItemIcon>
@@ -92,19 +96,27 @@ const SwitchListItem: React.FC<Props> = props => {
       <ListItemText
         id={ServiceTypeReadable[serviceType]}
         primary={ServiceTypeReadable[serviceType]}
-        secondary={`${getCountForServiceType(
-          serviceType
-        )} / ${getCountFromDataArray(jsonData.data, serviceType)}`}
+        secondary={
+          <>
+            <Typography
+              variant="caption"
+              component="span"
+              style={{ color: isChecked ? "inherit" : "#ccc" }}
+            >
+              {getCountForServiceType(serviceType)} /
+            </Typography>
+            <Typography component="span" variant="caption">
+              {getCountFromDataArray(jsonData.data, serviceType)}
+            </Typography>
+          </>
+        }
       />
       <ListItemSecondaryAction>
         <ServiceSwitch
           edge="end"
           disabled={layerType === LayerType.Extruded}
           onChange={handleToggle(serviceType)}
-          checked={
-            services.indexOf(serviceType) !== -1 &&
-            layerType !== LayerType.Extruded
-          }
+          checked={isChecked}
           inputProps={{
             "aria-labelledby": ServiceTypeReadable[serviceType]
           }}
