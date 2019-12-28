@@ -1,6 +1,7 @@
 import React from "react";
 
 import { loadCSS } from "fg-loadcss";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 
 import { makeStyles } from "@material-ui/core/styles";
 import {
@@ -32,7 +33,7 @@ import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
 import SearchGroup from "./components/SearchGroup";
 import routes from "./routes";
 
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { Switch, Route, Link } from "react-router-dom";
 import Atlas from "./containers/Atlas";
 
 const drawerWidth = 240;
@@ -124,7 +125,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const App: React.FC = () => {
+const App: React.FC<RouteComponentProps> = props => {
   const classes = useStyles();
   const theme = useTheme();
 
@@ -146,7 +147,7 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <Router>
+    <>
       <CssBaseline />
       <AppBar
         position="fixed"
@@ -298,6 +299,7 @@ const App: React.FC = () => {
               component={Link}
               to={route.path}
               className={classes.menuItem}
+              selected={props.location.pathname === route.path}
             >
               <ListItemIcon
                 style={{ marginLeft: 12 }}
@@ -323,8 +325,8 @@ const App: React.FC = () => {
           ))}
         </Switch>
       </main>
-    </Router>
+    </>
   );
 };
 
-export default App;
+export default withRouter(App);
