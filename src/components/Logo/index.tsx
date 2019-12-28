@@ -12,23 +12,13 @@ const useStyles = makeStyles(theme => ({
   branding: {
     fontWeight: 900,
     fontSize: 14,
-    lineHeight: "32px",
+    lineHeight: "14px",
     textTransform: "uppercase",
     position: "relative",
-    paddingRight: 28,
-    paddingLeft: 14,
+    // paddingRight: 28,
+    paddingLeft: 8,
     zIndex: 2,
-    textShadow: [1, 2, 3, 4]
-      .reduce(
-        (acc, id) => `${acc},
-      -${id}px ${id}px 0 ${APP_BAR_COLOR},
-			${id}px ${id}px 0 ${APP_BAR_COLOR},
-			${id}px -${id}px 0 ${APP_BAR_COLOR},
-      -${id}px -${id}px 0 ${APP_BAR_COLOR}
-    `,
-        ""
-      )
-      .substr(1)
+    background: APP_BAR_COLOR
   },
   brandingSymbol: {
     marginRight: 12,
@@ -36,11 +26,11 @@ const useStyles = makeStyles(theme => ({
     position: "absolute",
     display: "block",
     right: 0,
-    top: "-14%",
+    top: -12,
     border: "2px solid transparent",
     width: "50px",
     paddingLeft: 16,
-    height: "120%",
+    height: 36,
     background: APP_BAR_COLOR,
     backgroundClip: "padding-box",
     textShadow: "none",
@@ -62,7 +52,7 @@ const useStyles = makeStyles(theme => ({
   },
   beta: {
     fontFamily: "Architects Daughter, cursive",
-    fontSize: 14,
+    fontSize: 8,
     textTransform: "lowercase",
     textShadow: "none",
     position: "absolute",
@@ -88,13 +78,18 @@ const Logo: React.FC<Props> = (props: Props) => {
       <div className={classes.brandingSymbol}>
         <Icon
           className={clsx(classes.gradientText, "far fa-lungs")}
-          style={{ width: "unset", verticalAlign: "sub", fontSize: 19 }}
+          style={{
+            width: "unset",
+            verticalAlign: "sub",
+            fontSize: 19,
+            marginTop: 6
+          }}
         />
       </div>
       <Typography
         variant="h5"
         component="h1"
-        style={props.style}
+        style={{ ...props.style, marginRight: 50 }}
         className={clsx(classes.branding, props.className)}
       >
         <sup className={classes.beta}>β</sup>
