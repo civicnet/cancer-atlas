@@ -101,6 +101,9 @@ const SearchGroup: React.FC = () => {
     250
   );
   const handleChangeQuery = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    if (isFilterOpen) {
+      setIsFilterOpen(false);
+    }
     dispatch(setQuery(ev.target.value));
     debouncedQuery(jsonData.data);
   };
