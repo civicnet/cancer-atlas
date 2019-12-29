@@ -146,7 +146,7 @@ const Changelog: React.FC = () => {
           <List className={classes.root} dense>
             {commits.map((commit: Commit) => (
               <React.Fragment key={commit.commitUrl}>
-                <ListItem alignItems="flex-start" disableGutters>
+                <ListItem alignItems="flex-start" disableGutters={true}>
                   <ListItemAvatar>
                     <Avatar
                       alt={commit.author.name}
