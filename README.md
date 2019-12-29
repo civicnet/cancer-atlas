@@ -8,10 +8,12 @@ Aplicația va conține informații importante despre traseul pacienților, de la
 
 În momentul de față, aplicația se află în stadiul de prototip interactiv. Ne puteți urmări pe Facebook pentru a fi la curent cu ultimele noutăți.
 
+<img src="screenshot.png" />
+
 <br/><br/>
+
 > Made with :heart: and :coffee: by
-> <br/>
-> [<img src="https://civicnet.ro/CivicNet_Logo.svg" width="170px"/>](https://civicnet.ro/)
+> <br/> > [<img src="https://civicnet.ro/CivicNet_Logo.svg" width="170px"/>](https://civicnet.ro/)
 
 <hr/>
 
