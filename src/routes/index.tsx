@@ -1,6 +1,7 @@
 import React from "react";
 import { Icon } from "@material-ui/core";
 import About from "../containers/About";
+import Changelog from "../containers/Changelog";
 
 const routes = [
   {
@@ -15,6 +16,12 @@ const routes = [
     main: () => <About />,
     icon: <Icon className="fas fa-info-circle" />,
     text: "Despre"
+  },
+  {
+    path: "/cancer-atlas/changelog",
+    main: () => <Changelog />,
+    icon: <Icon className="fas fa-clipboard-list" />,
+    text: "Actualizari"
   }
 ];
 

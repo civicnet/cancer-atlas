@@ -16,8 +16,8 @@ const InfoCard: React.FC<ComponentWithInheritedProps> = props => {
   return (
     <Card className={clsx(classes.card, props.className)} style={props.style}>
       <CardContent>
-        <Typography variant="body1" component="p">
-          Aplicația GPS a{" "}
+        <Typography variant="h6" component="p" style={{ paddingBottom: 20 }}>
+          Aplicația{" "}
           <a
             href="https://www.csid.ro/health/noutati-sanatate/navigatorul-de-pacienti-specialistul-cu-rol-important-in-relatia-dintre-pacient-si-medic-16034421/"
             target="_blank"
