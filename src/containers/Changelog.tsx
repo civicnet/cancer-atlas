@@ -14,7 +14,7 @@ import {
   IconButton
 } from "@material-ui/core";
 import Container from "./Container";
-import { graphql } from "@octokit/graphql";
+import Octokit from "@octokit/rest";
 import { Link } from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
@@ -35,91 +35,47 @@ const useStyles = makeStyles(theme => ({
 }));
 
 interface Commit {
-  author: {
-    avatarUrl: string;
-    name: string;
-    date: string;
-    user: {
-      bio: string;
+  sha: string;
+  commit: {
+    message: string;
+    url: string;
+    author: {
+      date: string;
     };
   };
-  commitUrl: string;
-  additions: string;
-  deletions: string;
-  message: string;
-  messageBody: string;
-  messageHeadline: string;
+  author: {
+    avatar_url: string;
+    login: string;
+    url: string;
+  };
 }
+
+const octokit = new Octokit({
+  log: {
+    debug: () => {},
+    info: () => {},
+    warn: console.warn,
+    error: console.error
+  }
+});
 
 const Changelog: React.FC = () => {
   const classes = useStyles();
-  const [repository, setRepository] = React.useState();
-
-  const getRepo = async () => {
-    return await graphql(
-      `
-        {
-          repository(owner: "CivicNet", name: "cancer-atlas") {
-            refs(first: 3, refPrefix: "refs/heads/") {
-              totalCount
-              edges {
-                node {
-                  name
-                  target {
-                    ... on Commit {
-                      history(first: 100) {
-                        nodes {
-                          author {
-                            avatarUrl
-                            name
-                            date
-                            user {
-                              bio
-                            }
-                          }
-                          commitUrl
-                          additions
-                          deletions
-                          message
-                          messageBody
-                          messageHeadline
-                        }
-                        totalCount
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      `,
-      {
-        headers: {
-          authorization: `token ${process.env.REACT_APP_GITHUB_TOKEN}`
-        }
-      }
-    );
-  };
+  const [commits, setCommits] = React.useState();
 
   useEffect(() => {
     (async function _() {
-      const data = await getRepo();
-      setRepository(data ? data.repository : null);
+      const repsonse = await octokit.repos.listCommits({
+        owner: "CivicNet",
+        repo: "cancer-atlas",
+        per_page: 100
+      });
+      setCommits(repsonse ? repsonse.data : null);
     })();
   }, []);
 
-  if (!repository) {
+  if (!commits) {
     return null;
-  }
-
-  const branches = repository.refs.edges;
-  let commits = [];
-  for (const branch of branches) {
-    if (branch.node.name === "master") {
-      commits = branch.node.target.history.nodes;
-      break;
-    }
   }
 
   return (
@@ -145,19 +101,19 @@ const Changelog: React.FC = () => {
           </Typography>
           <List className={classes.root} dense>
             {commits.map((commit: Commit) => (
-              <React.Fragment key={commit.commitUrl}>
+              <React.Fragment key={commit.sha}>
                 <ListItem alignItems="flex-start" disableGutters={true}>
                   <ListItemAvatar>
                     <Avatar
-                      alt={commit.author.name}
-                      src={commit.author.avatarUrl}
+                      alt={commit.author.login}
+                      src={commit.author.avatar_url}
                     />
                   </ListItemAvatar>
                   <ListItemText
-                    primary={commit.author.name}
+                    primary={commit.author.login}
                     secondary={
                       <a
-                        href={commit.commitUrl}
+                        href={commit.commit.url}
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{
@@ -172,10 +128,10 @@ const Changelog: React.FC = () => {
                           color="textPrimary"
                         >
                           {new Intl.DateTimeFormat("ro-RO").format(
-                            new Date(commit.author.date)
+                            new Date(commit.commit.author.date)
                           )}
                         </Typography>
-                        {` — ${commit.messageHeadline}`}
+                        {` — ${commit.commit.message}`}
                       </a>
                     }
                   />
