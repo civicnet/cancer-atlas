@@ -328,7 +328,7 @@ const App: React.FC<RouteComponentProps> = props => {
           {routes.map((route, index) => (
             <Route
               key={index}
-              path={route.path}
+              path={process.env.PUBLIC_URL + route.path}
               exact={route.exact}
               children={<route.main />}
             />

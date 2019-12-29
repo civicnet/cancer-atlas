@@ -5,20 +5,20 @@ import Changelog from "../containers/Changelog";
 
 const routes = [
   {
-    path: "/cancer-atlas",
+    path: "/",
     exact: true,
     main: () => null,
     icon: <Icon className="fas fa-map-marker-alt" />,
     text: "Atlas"
   },
   {
-    path: "/cancer-atlas/despre",
+    path: "/despre",
     main: () => <About />,
     icon: <Icon className="fas fa-info-circle" />,
     text: "Despre"
   },
   {
-    path: "/cancer-atlas/changelog",
+    path: "/changelog",
     main: () => <Changelog />,
     icon: <Icon className="fas fa-clipboard-list" />,
     text: "Actualizari"
