@@ -14,9 +14,9 @@ Aplicația va conține informații importante despre traseul pacienților, de la
 	<br>
 	<br>
 	<br>
-Made with :heart: and :coffee: by
-<br/> [<img src="https://civicnet.ro/CivicNet_Logo.svg" width="170px"/>](https://civicnet.ro/)
+  Made with :heart: and :coffee: by
+  <img src="https://civicnet.ro/CivicNet_Logo.svg" width="170px"/>
+  <br>
 </div>
-<hr/>
 
-Favicon made by [Freepik](https://www.flaticon.com/authors/freepik) from [www.flaticon.com](www.flaticon.com)
+> Favicon made by [Freepik](https://www.flaticon.com/authors/freepik) from [www.flaticon.com](www.flaticon.com)
