@@ -7,15 +7,16 @@ import Tooltip from "../components/Tooltip";
 import LayerPicker from "../components/LayerPicker";
 import Legend from "../components/Legend";
 import { MedicalServiceData } from "../components/ServiceMap/ServiceMapSlice";
+import { ScreenCoordinates } from "../types/interfaces/ScreenCoordinates";
 
 const useStyles = makeStyles(theme => ({
   tooltipContainer: {
     zIndex: 10,
     position: "absolute",
-    top: 20,
-    right: 20,
-    minWidth: 345,
-    maxWidth: 345
+    top: 74,
+    right: 16,
+    // minWidth: 345,
+    maxWidth: 300
   },
   layerPicker: {
     display: "flex",
@@ -43,8 +44,11 @@ const Atlas: React.FC = () => {
     (state: RootState) => state.layerPickerReducer
   );
 
-  const onServiceHover = (obj: MedicalServiceData) => {
-    setTooltip(obj);
+  const onServiceHover = (
+    service: MedicalServiceData,
+    pos: ScreenCoordinates
+  ) => {
+    setTooltip({ service, pos });
   };
 
   const onServiceClick = (obj: MedicalServiceData) => {
@@ -69,8 +73,14 @@ const Atlas: React.FC = () => {
       />
       <div className={classes.tooltipContainer}>
         {<Tooltip service={pinnedTooltip} onClose={unpinTooltip} />}
-        {<Tooltip service={tooltip} style={{ marginTop: 20 }} />}
       </div>
+      {tooltip && (
+        <Tooltip
+          service={tooltip.service}
+          pos={tooltip.pos}
+          style={{ marginTop: 20 }}
+        />
+      )}
       <ServiceMap
         services={services}
         onHover={onServiceHover}

@@ -30,6 +30,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import { amber } from "@material-ui/core/colors";
 import clsx from "clsx";
 import InfoIcon from "@material-ui/icons/Info";
+import { ScreenCoordinates } from "../../types/interfaces/ScreenCoordinates";
 
 export type ServiceTypeIndexed<T> = {
   [key in ServiceType]: T;
@@ -66,7 +67,7 @@ export const ServiceTypeColorMap: ServiceTypeIndexed<ServiceTypeColor> = {
 };
 
 export interface LayerProps {
-  onHover: (obj: MedicalServiceData) => void;
+  onHover: (service: MedicalServiceData, pos: ScreenCoordinates) => void;
   onClick: (obj: MedicalServiceData) => void;
   layerType: LayerType;
 }

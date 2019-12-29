@@ -110,7 +110,8 @@ const getScatterplot = (
       return chroma(ServiceTypeColorMap[d.type as ServiceType]).rgb();
     },
     getLineColor: [0, 0, 0, 100],
-    onHover: (d: { object: MedicalServiceData }) => props.onHover(d.object),
+    onHover: (d: { object: MedicalServiceData; x: number; y: number }) =>
+      props.onHover(d.object, { x: d.x, y: d.y }),
     onClick: (d: { object: MedicalServiceData }) => props.onClick(d.object)
   });
 };

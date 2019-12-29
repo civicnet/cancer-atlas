@@ -17,6 +17,7 @@ import {
 } from "@material-ui/core";
 import clsx from "clsx";
 import { ServiceType, MedicalServiceData } from "../ServiceMap/ServiceMapSlice";
+import { ScreenCoordinates } from "../../types/interfaces/ScreenCoordinates";
 
 const useStyles = makeStyles({
   card: {
@@ -33,6 +34,7 @@ const useStyles = makeStyles({
 
 interface Props {
   service?: MedicalServiceData;
+  pos?: ScreenCoordinates;
   style?: React.CSSProperties;
   onClose?: () => void;
 }
@@ -46,14 +48,14 @@ const Tooltip: React.FC<Props> = (props: Props) => {
 
   const differentiator =
     props.service.type === ServiceType.FamilyMedicine ? (
-      <ListItem>
+      <ListItem disableGutters dense>
         <ListItemIcon>
           <Icon className={clsx(classes.icon, "fal fa-clinic-medical")} />
         </ListItemIcon>
         <ListItemText primary={props.service.supplierName} />
       </ListItem>
     ) : (
-      <ListItem>
+      <ListItem disableGutters dense>
         <ListItemIcon>
           <Icon className={clsx(classes.icon, "fal fa-bookmark")} />
         </ListItemIcon>
@@ -61,8 +63,33 @@ const Tooltip: React.FC<Props> = (props: Props) => {
       </ListItem>
     );
 
+  let transformX = "-50%";
+  if (props.pos) {
+    if (props.pos.x < 220) {
+      transformX = "0%";
+    }
+
+    if (props.pos.x > window.innerWidth - 150) {
+      transformX = "-100%";
+    }
+  }
+
+  const transformY =
+    props.pos && props.pos.y < 350 ? "20px" : "calc(-100% - 40px)";
+
+  const posStyle = props.pos
+    ? {
+        position: "absolute" as any,
+        top: props.pos.y,
+        left: props.pos.x,
+        zIndex: 10,
+        width: 300,
+        transform: `translate(${transformX}, ${transformY})`
+      }
+    : {};
+
   return (
-    <Card className={classes.card} style={props.style}>
+    <Card className={classes.card} style={{ ...props.style, ...posStyle }}>
       <CardContent>
         <Typography
           className={classes.title}
@@ -71,8 +98,8 @@ const Tooltip: React.FC<Props> = (props: Props) => {
         >
           {ServiceTypeReadable[props.service.type]}
         </Typography>
-        <List dense={true}>
-          <ListItem>
+        <List dense={true} disablePadding={true}>
+          <ListItem disableGutters divider dense>
             <ListItemIcon>
               <Icon
                 className={clsx(
@@ -85,26 +112,26 @@ const Tooltip: React.FC<Props> = (props: Props) => {
               primary={
                 props.service.type === ServiceType.FamilyMedicine
                   ? props.service.medicName
-                  : props.service.supplierName
+                  : props.service.name
               }
             />
           </ListItem>
           {differentiator}
-          <ListItem>
+          <ListItem disableGutters dense>
             <ListItemIcon>
               <Icon className={clsx(classes.icon, "fal fa-map-marker-alt")} />
             </ListItemIcon>
             <ListItemText primary={props.service.address} />
           </ListItem>
           {props.service.email && (
-            <ListItem>
+            <ListItem disableGutters dense>
               <ListItemIcon>
                 <Icon className={clsx(classes.icon, "fal fa-envelope")} />
               </ListItemIcon>
               <ListItemText primary={props.service.email} />
             </ListItem>
           )}
-          <ListItem>
+          <ListItem disableGutters dense>
             <ListItemIcon>
               <Icon className={clsx(classes.icon, "fal fa-phone")} />
             </ListItemIcon>

@@ -47,6 +47,7 @@ export interface MedicalServiceData {
   contractNo: string;
   email: string;
   medicName?: string;
+  name?: string;
   specialty?: string;
   phone: string;
   supplierName: string;
