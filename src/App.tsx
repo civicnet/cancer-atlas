@@ -282,6 +282,12 @@ const App: React.FC<RouteComponentProps> = props => {
         }}
       >
         <div className={classes.toolbar}>
+          <a
+            href="https://civicnet.ro"
+            style={{ display: "flex", flex: 1, justifyContent: "center" }}
+          >
+            <img src="CivicNet_Logo.svg" style={{ height: 32 }} />
+          </a>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === "rtl" ? (
               <ChevronRightIcon />
