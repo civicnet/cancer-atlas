@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/cancer-atlas/precache-manifest.2df79edbf4fa37ed75584a262f57c0e6.js"
+  "/cancer-atlas/precache-manifest.e8ea40c6f7344ab5153fd83e96e9bf7d.js"
 );
 
 self.addEventListener('message', (event) => {
