@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AppThunk } from "../../store/store";
-import { fetchJSON, fetchGeoJSON } from "../../api/API";
-import { ServiceType } from ".";
+import { fetchGeoJSON } from "../../api/API";
 
 interface ViewState {
   width: number;
@@ -15,25 +14,40 @@ interface ViewState {
   pitch: number;
 }
 
-interface ApiUninitialized {
-  code: "Uninitialized";
+export enum ServiceType {
+  FamilyMedicine = "family_medicine",
+  Laboratory = "laboratories",
+  HomeCare = "home_care",
+  Imaging = "imaging"
 }
 
-interface ApiOK {
-  code: "OK";
+export enum ApiCode {
+  Uninitialized,
+  OK,
+  Fail
 }
-interface ApiError {
-  code: "Fail";
+
+type ApiUninitialized = {
+  code: ApiCode.Uninitialized;
+};
+
+type ApiOK = {
+  code: ApiCode.OK;
+};
+
+type ApiError = {
+  code: ApiCode.Fail;
   msg: string;
-}
+};
 
-type APIStatus = ApiOK | ApiError | ApiUninitialized;
+type ApiStatus = ApiOK | ApiError | ApiUninitialized;
 
 export interface MedicalServiceData {
   address: string;
   contractNo: string;
   email: string;
-  medicName: string;
+  medicName?: string;
+  specialty?: string;
   phone: string;
   supplierName: string;
   lat: number;
@@ -41,50 +55,66 @@ export interface MedicalServiceData {
   type: ServiceType;
 }
 
-interface JsonData {
+export interface MedicalServiceDataLayer {
   data: MedicalServiceData[];
-  status: APIStatus;
+  status: ApiStatus;
 }
+
+export type MedicalServiceDataLayerMap = {
+  [key in ServiceType]: MedicalServiceDataLayer;
+};
 
 interface GeoJsonData {
   data: any[];
-  status: APIStatus;
+  status: ApiStatus;
 }
 
 type CurrentDisplayState = {
   viewState: ViewState;
-  jsonData: JsonData;
+  medicalServices: MedicalServiceDataLayerMap;
   geoJsonData: GeoJsonData;
 };
 
+const initialDataStatus: ApiStatus = {
+  code: ApiCode.Uninitialized
+};
+
+const initialMedicalServices = Object.values(ServiceType).reduce(
+  (acc: Partial<MedicalServiceDataLayerMap>, type: ServiceType) => {
+    return {
+      ...acc,
+      [type]: {
+        data: [],
+        status: initialDataStatus
+      }
+    };
+  },
+  {}
+);
+
+const initialViewState = {
+  width: window.innerWidth,
+  height: window.innerHeight,
+  longitude: 23.5602928,
+  latitude: 46.0291793,
+  zoom: 6,
+  maxZoom: 20,
+  minZoom: 1,
+  bearing: 0,
+  pitch: 0
+};
+
 let initialState: CurrentDisplayState = {
-  viewState: {
-    width: window.innerWidth,
-    height: window.innerHeight,
-    longitude: 23.5602928,
-    latitude: 46.0291793,
-    zoom: 6,
-    maxZoom: 20,
-    minZoom: 1,
-    bearing: 0,
-    pitch: 0
-  },
-  jsonData: {
-    data: [],
-    status: {
-      code: "Uninitialized"
-    }
-  },
+  viewState: initialViewState,
+  medicalServices: initialMedicalServices as MedicalServiceDataLayerMap,
   geoJsonData: {
     data: [],
-    status: {
-      code: "Uninitialized"
-    }
+    status: initialDataStatus
   }
 };
 
 const serviceMapSlice = createSlice({
-  name: "layerPicker",
+  name: "serviceMap",
   initialState,
   reducers: {
     updateViewState(state, action: PayloadAction<Partial<ViewState>>) {
@@ -93,16 +123,28 @@ const serviceMapSlice = createSlice({
         ...action.payload
       };
     },
-    receiveMedicalServicesDataSuccess(state, action: PayloadAction<any[]>) {
-      state.jsonData.data = action.payload;
-      state.jsonData.status = {
-        code: "OK"
+    receiveMedicalServiceDataLayer(
+      state,
+      action: PayloadAction<{
+        service: ServiceType;
+        layer: MedicalServiceDataLayer;
+      }>
+    ) {
+      state.medicalServices = {
+        ...state.medicalServices,
+        [action.payload.service]: action.payload.layer
       };
     },
-    receiveMedicalServicesDataFailed(state, action: PayloadAction<string>) {
-      state.jsonData.status = {
-        code: "Fail",
-        msg: action.payload
+    setMedicalServiceDataLayerCode(
+      state,
+      action: PayloadAction<{ service: ServiceType; status: ApiStatus }>
+    ) {
+      state.medicalServices = {
+        ...state.medicalServices,
+        [action.payload.service]: {
+          data: state.medicalServices[action.payload.service].data,
+          status: action.payload.status
+        }
       };
     },
     receiveMedicalServicesGeoJsonDataSuccess(
@@ -111,7 +153,7 @@ const serviceMapSlice = createSlice({
     ) {
       state.geoJsonData.data = action.payload;
       state.geoJsonData.status = {
-        code: "OK"
+        code: ApiCode.OK
       };
     },
     receiveMedicalServicesGeoJsonDataFailed(
@@ -119,7 +161,7 @@ const serviceMapSlice = createSlice({
       action: PayloadAction<string>
     ) {
       state.geoJsonData.status = {
-        code: "Fail",
+        code: ApiCode.Fail,
         msg: action.payload
       };
     }
@@ -128,25 +170,13 @@ const serviceMapSlice = createSlice({
 
 export const {
   updateViewState,
-  receiveMedicalServicesDataSuccess,
-  receiveMedicalServicesDataFailed,
   receiveMedicalServicesGeoJsonDataSuccess,
-  receiveMedicalServicesGeoJsonDataFailed
+  receiveMedicalServicesGeoJsonDataFailed,
+  receiveMedicalServiceDataLayer,
+  setMedicalServiceDataLayerCode
 } = serviceMapSlice.actions;
 
 export default serviceMapSlice.reducer;
-
-export const fetchMedicalServicesData = (
-  services: ServiceType[]
-): AppThunk => async dispatch => {
-  try {
-    await fetchJSON(services, data => {
-      dispatch(receiveMedicalServicesDataSuccess(data));
-    });
-  } catch (err) {
-    dispatch(receiveMedicalServicesDataFailed(err.toString()));
-  }
-};
 
 export const fetchMedicalServicesBuildingData = (
   services: { file: string; type: ServiceType }[]

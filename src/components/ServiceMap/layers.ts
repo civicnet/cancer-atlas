@@ -1,13 +1,19 @@
-import { LayerProps, ServiceTypeColorMap, ServiceType } from ".";
+import { LayerProps, ServiceTypeColorMap } from ".";
 import { ScatterplotLayer } from "@deck.gl/layers";
 import { HeatmapLayer } from "@deck.gl/aggregation-layers";
 import { ScreenGridLayer } from "@deck.gl/aggregation-layers";
-import { GeoJsonLayer } from "@deck.gl/layers";
+// import { GeoJsonLayer } from "@deck.gl/layers";
 
 import chroma from "chroma-js";
 
 import { LayerType } from "../LayerPicker/LayerPickerSlice";
 import IconClusterLayer from "../IconClusterLayer";
+import {
+  ServiceType,
+  MedicalServiceDataLayerMap,
+  MedicalServiceData,
+  ApiCode
+} from "./ServiceMapSlice";
 
 export const getAggregateColorRange = () => [
   chroma("#5A1846").rgb(),
@@ -18,27 +24,65 @@ export const getAggregateColorRange = () => [
   chroma("#FFC300").rgb()
 ];
 
-export const getLayer = (data: any[], props: LayerProps) => {
+export const getLayers = (
+  data: Partial<MedicalServiceDataLayerMap>,
+  shownServices: ServiceType[],
+  props: LayerProps
+) => {
+  const flatData = () =>
+    Object.values(data).reduce((acc, layer) => {
+      if (layer === undefined) {
+        return acc;
+      }
+
+      if (layer.status.code !== ApiCode.OK) {
+        return acc;
+      }
+
+      return [...acc, ...layer.data];
+    }, [] as MedicalServiceData[]);
+
   switch (props.layerType) {
-    case LayerType.ScatterPlot:
-      return getScatterplot(data, props);
     case LayerType.Heatmap:
-      return getHeatmap(data, props);
+      return [getHeatmap(flatData(), props)];
     case LayerType.Grid:
-      return getGrid(data, props);
+      return [getGrid(flatData(), props)];
     case LayerType.Extruded:
-      return getExtruded(data, props);
+      return [];
+    // return getExtruded(data, props);
     case LayerType.Icon:
-      return getIcon(data, props);
+      return [getIcon(flatData(), props)];
+    case LayerType.ScatterPlot:
     default:
-      return getScatterplot(data, props);
+      return Object.keys(data)
+        .map(key => {
+          const serviceType = key as ServiceType;
+          const layer = data[serviceType];
+          if (layer === undefined) {
+            return null;
+          }
+
+          if (layer.status.code !== ApiCode.OK) {
+            return null;
+          }
+
+          const isVisible = shownServices.includes(serviceType);
+          return getScatterplot(layer.data, serviceType, isVisible, props);
+        })
+        .filter(layer => layer !== null);
   }
 };
 
-const getScatterplot = (pointData: any, props: LayerProps) => {
+const getScatterplot = (
+  pointData: MedicalServiceData[],
+  serviceType: ServiceType,
+  isVisible: boolean,
+  props: LayerProps
+) => {
   return new ScatterplotLayer({
-    id: "ScatterplotLayer",
+    id: `ScatterplotLayer-${serviceType}`,
     data: pointData,
+    visible: isVisible,
     pickable: true,
     opacity: 0.6,
     stroked: true,
@@ -47,13 +91,14 @@ const getScatterplot = (pointData: any, props: LayerProps) => {
     radiusMinPixels: 5,
     radiusMaxPixels: 20,
     lineWidthMinPixels: 1,
-    getPosition: (d: any) => [d.lng, d.lat],
+    getPosition: (d: MedicalServiceData) => [d.lng, d.lat],
     getRadius: 12,
-    getFillColor: (d: any) =>
-      chroma(ServiceTypeColorMap[d.type as ServiceType]).rgb(),
+    getFillColor: (d: MedicalServiceData) => {
+      return chroma(ServiceTypeColorMap[d.type as ServiceType]).rgb();
+    },
     getLineColor: [0, 0, 0, 100],
-    onHover: (d: any) => props.onHover(d.object),
-    onClick: (d: any) => props.onClick(d.object)
+    onHover: (d: { object: MedicalServiceData }) => props.onHover(d.object),
+    onClick: (d: { object: MedicalServiceData }) => props.onClick(d.object)
   });
 };
 
@@ -98,7 +143,7 @@ const getGrid = (pointData: any, props: LayerProps) => {
   });
 };
 
-const getExtruded = (pointData: any, props: LayerProps) => {
+/* const getExtruded = (pointData: any, props: LayerProps) => {
   const getTooltipData = (d: any) => ({
     address: d.properties.mf_address,
     email: d.properties.mf_email,
@@ -126,14 +171,15 @@ const getExtruded = (pointData: any, props: LayerProps) => {
     getFillColor: (d: any) =>
       chroma(ServiceTypeColorMap[ServiceType.FamilyMedicine]).rgb(),
     getLineColor: [80, 80, 80],
-    getLineWidth: 1,
-    onHover: (d: any) =>
+    getLineWidth: 1
+    onHover: (d: { object: MedicalServiceData }) =>
       d.object
         ? props.onHover(getTooltipData(d.object))
         : props.onHover(null as any),
-    onClick: (d: any) =>
+    onClick: (d: { object: MedicalServiceData }) =>
       d.object
         ? props.onClick(getTooltipData(d.object))
         : props.onClick(null as any)
   });
 };
+ */

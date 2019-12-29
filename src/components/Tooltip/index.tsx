@@ -6,12 +6,7 @@ import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 
-import {
-  ServiceObject,
-  ServiceType,
-  ServiceTypeIcons,
-  ServiceTypeReadable
-} from "../ServiceMap";
+import { ServiceTypeIcons, ServiceTypeReadable } from "../ServiceMap";
 import {
   List,
   ListItem,
@@ -21,6 +16,7 @@ import {
   IconButton
 } from "@material-ui/core";
 import clsx from "clsx";
+import { ServiceType, MedicalServiceData } from "../ServiceMap/ServiceMapSlice";
 
 const useStyles = makeStyles({
   card: {
@@ -36,7 +32,7 @@ const useStyles = makeStyles({
 });
 
 interface Props {
-  service?: ServiceObject;
+  service?: MedicalServiceData;
   style?: React.CSSProperties;
   onClose?: () => void;
 }
@@ -89,7 +85,7 @@ const Tooltip: React.FC<Props> = (props: Props) => {
               primary={
                 props.service.type === ServiceType.FamilyMedicine
                   ? props.service.medicName
-                  : props.service.name
+                  : props.service.supplierName
               }
             />
           </ListItem>

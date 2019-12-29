@@ -2,22 +2,22 @@ import React, { useEffect } from "react";
 
 import DeckGL from "@deck.gl/react";
 import { StaticMap } from "react-map-gl";
-import { getLayer } from "./layers";
+import { getLayers } from "./layers";
 import { LayerType } from "../LayerPicker/LayerPickerSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/rootReducer";
 import {
   updateViewState,
-  fetchMedicalServicesData,
-  fetchMedicalServicesBuildingData
+  fetchMedicalServicesBuildingData,
+  ApiCode,
+  receiveMedicalServiceDataLayer,
+  setMedicalServiceDataLayerCode,
+  MedicalServiceDataLayer,
+  ServiceType,
+  MedicalServiceData
 } from "./ServiceMapSlice";
-
-export enum ServiceType {
-  FamilyMedicine = "family_medicine",
-  Laboratory = "laboratories",
-  HomeCare = "home_care",
-  Imaging = "imaging"
-}
+import { streamJSON } from "../../api/API";
+import { noOpFunction } from "../../lib/defaults";
 
 export type ServiceTypeIndexed<T> = {
   [key in ServiceType]: T;
@@ -53,14 +53,9 @@ export const ServiceTypeColorMap: ServiceTypeIndexed<ServiceTypeColor> = {
   [ServiceType.Laboratory]: "#e67e22"
 };
 
-export interface ServiceObject {
-  type: ServiceType;
-  [key: string]: string;
-}
-
 export interface LayerProps {
-  onHover: (obj: ServiceObject) => void;
-  onClick: (obj: ServiceObject) => void;
+  onHover: (obj: MedicalServiceData) => void;
+  onClick: (obj: MedicalServiceData) => void;
   layerType: LayerType;
 }
 
@@ -72,7 +67,7 @@ const ServiceMap: React.FC<Props & LayerProps> = (
   props: Props & LayerProps
 ) => {
   const dispatch = useDispatch();
-  const { viewState, jsonData, geoJsonData } = useSelector(
+  const { viewState, medicalServices, geoJsonData } = useSelector(
     (state: RootState) => state.serviceMapReducer
   );
   const { searchResults } = useSelector(
@@ -83,7 +78,7 @@ const ServiceMap: React.FC<Props & LayerProps> = (
   );
 
   useEffect(() => {
-    if (geoJsonData.status.code !== "Uninitialized") {
+    if (geoJsonData.status.code !== ApiCode.Uninitialized) {
       return;
     }
 
@@ -100,7 +95,17 @@ const ServiceMap: React.FC<Props & LayerProps> = (
   }, [props.layerType, geoJsonData.status.code, dispatch]);
 
   useEffect(() => {
-    dispatch(fetchMedicalServicesData(Object.values(ServiceType)));
+    const onDone = (service: ServiceType, layer: MedicalServiceDataLayer) =>
+      dispatch(receiveMedicalServiceDataLayer({ service, layer }));
+    const onFail = (service: ServiceType, msg: string) =>
+      dispatch(
+        setMedicalServiceDataLayerCode({
+          service,
+          status: { code: ApiCode.Fail, msg: msg }
+        })
+      );
+
+    streamJSON(Object.values(ServiceType), onDone, noOpFunction, onFail);
   }, [dispatch]);
 
   useEffect(() => {
@@ -119,24 +124,28 @@ const ServiceMap: React.FC<Props & LayerProps> = (
     }
   }, [props.layerType, dispatch]);
 
-  if (!jsonData.data) {
+  if (!medicalServices[ServiceType.FamilyMedicine].data) {
     return null;
   }
 
-  let displayedData = searchResults.length ? searchResults : jsonData.data;
-  displayedData = displayedData.filter(data => {
+  const displayedData =
+    searchResults !== undefined ? searchResults : medicalServices;
+
+  /* displayedData = displayedData.filter(data => {
     if (services.includes(data.type)) {
       return true;
     }
     return false;
-  });
-  const layer = getLayer(
-    props.layerType !== LayerType.Extruded ? displayedData : geoJsonData.data,
+  }); */
+
+  const layers = getLayers(
+    props.layerType !== LayerType.Extruded ? displayedData : {}, // : geoJsonData.data,
+    services,
     props
   );
 
   return (
-    <DeckGL initialViewState={viewState} controller={true} layers={[layer]}>
+    <DeckGL initialViewState={viewState} controller={true} layers={layers}>
       <StaticMap
         key="static_map"
         width="100%"

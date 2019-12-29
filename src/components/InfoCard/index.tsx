@@ -2,7 +2,7 @@ import React from "react";
 import { makeStyles, Card, CardContent, Typography } from "@material-ui/core";
 
 import clsx from "clsx";
-import { ComponentWithInheritedProps } from "../../types/CommonComponentProps";
+import { ComponentWithInheritedProps } from "../../types/interfaces/CommonComponentProps";
 
 const useStyles = makeStyles(theme => ({
   card: {

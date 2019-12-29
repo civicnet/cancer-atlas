@@ -16,7 +16,6 @@ import { RootState } from "../../store/rootReducer";
 import { toggleServiceType } from "./SwitchListItemSlice";
 
 import {
-  ServiceType,
   ServiceTypeColorMap,
   ServiceTypeIcons,
   ServiceTypeReadable
@@ -24,6 +23,7 @@ import {
 
 import { CustomSwitch } from "../CustomSwitch";
 import { LayerType } from "../LayerPicker/LayerPickerSlice";
+import { ServiceType, MedicalServiceData } from "../ServiceMap/ServiceMapSlice";
 
 const useStyles = makeStyles(_ => ({
   serviceIcon: {
@@ -47,7 +47,7 @@ const SwitchListItem: React.FC<Props> = props => {
   const { services } = useSelector(
     (state: RootState) => state.switchListItemReducer
   );
-  const { jsonData } = useSelector(
+  const { medicalServices } = useSelector(
     (state: RootState) => state.serviceMapReducer
   );
   const { searchResults } = useSelector(
@@ -63,7 +63,10 @@ const SwitchListItem: React.FC<Props> = props => {
     dispatch(toggleServiceType(value));
   };
 
-  const getCountFromDataArray = (data: any[], service: ServiceType) => {
+  const getCountFromDataArray = (
+    data: MedicalServiceData[],
+    service: ServiceType
+  ) => {
     return data.reduce((acc, serviceData) => {
       if (serviceData.type !== service) {
         return acc;
@@ -74,7 +77,10 @@ const SwitchListItem: React.FC<Props> = props => {
   };
 
   const getCountForServiceType = (service: ServiceType) => {
-    const data = searchResults.length ? searchResults : jsonData.data;
+    const searchResultsCoerced = searchResults && searchResults[service];
+    const data = searchResultsCoerced
+      ? searchResultsCoerced.data
+      : medicalServices[service].data;
     return getCountFromDataArray(data, service);
   };
 
@@ -106,7 +112,10 @@ const SwitchListItem: React.FC<Props> = props => {
               {getCountForServiceType(serviceType)} /
             </Typography>
             <Typography component="span" variant="caption">
-              {getCountFromDataArray(jsonData.data, serviceType)}
+              {getCountFromDataArray(
+                medicalServices[serviceType].data,
+                serviceType
+              )}
             </Typography>
           </>
         }

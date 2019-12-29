@@ -11,15 +11,19 @@ import {
   List,
   Typography
 } from "@material-ui/core";
+
 import clsx from "clsx";
-import { ServiceType } from "../ServiceMap";
+
+import {
+  ServiceType,
+  MedicalServiceDataLayerMap
+} from "../ServiceMap/ServiceMapSlice";
 import SwitchListItem from "../SwitchListItem";
 import SearchIcon from "@material-ui/icons/Search";
 import { useDispatch, useSelector } from "react-redux";
 import { setQuery, performQuery } from "./SearchGroupSlice";
 import { RootState } from "../../store/rootReducer";
 import debounce from "debounce";
-import { MedicalServiceData } from "../ServiceMap/ServiceMapSlice";
 
 const useStyles = makeStyles(theme => ({
   search: {
@@ -89,7 +93,7 @@ const SearchGroup: React.FC = () => {
 
   const dispatch = useDispatch();
 
-  const { jsonData } = useSelector(
+  const { medicalServices } = useSelector(
     (state: RootState) => state.serviceMapReducer
   );
   const { searchResults, query } = useSelector(
@@ -101,7 +105,7 @@ const SearchGroup: React.FC = () => {
   };
 
   const debouncedQuery = debounce(
-    (data: MedicalServiceData[]) => dispatch(performQuery(data)),
+    (data: MedicalServiceDataLayerMap) => dispatch(performQuery(data)),
     250
   );
   const handleChangeQuery = (ev: React.ChangeEvent<HTMLInputElement>) => {
@@ -109,15 +113,21 @@ const SearchGroup: React.FC = () => {
       setIsFilterOpen(false);
     }
     dispatch(setQuery(ev.target.value));
-    debouncedQuery(jsonData.data);
+    debouncedQuery(medicalServices);
   };
 
   const handleSubmitQuery = (ev: React.KeyboardEvent<HTMLInputElement>) => {
     if (ev.keyCode === 13) {
       debouncedQuery.clear();
-      dispatch(performQuery(jsonData.data));
+      dispatch(performQuery(medicalServices));
     }
   };
+
+  const resultCount =
+    searchResults &&
+    Object.values(searchResults)
+      .map(res => res && res.data.length)
+      .reduce((acc: number, count) => acc + Number(count), 0);
 
   return (
     <>
@@ -164,7 +174,7 @@ const SearchGroup: React.FC = () => {
       </div>
       {query.length > 3 && (
         <Typography style={{ fontSize: 12, fontStyle: "italic", opacity: 0.7 }}>
-          {searchResults.length} rezultate pentru "{query}"
+          {resultCount} rezultate pentru "{query}"
         </Typography>
       )}
     </>

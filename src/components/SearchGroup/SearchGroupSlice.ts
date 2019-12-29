@@ -1,15 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import Fuse from "fuse.js";
-
-type CurrentDisplayState = {
-  query: string;
-  searchResults: any[];
-};
-
-let initialState: CurrentDisplayState = {
-  query: "",
-  searchResults: []
-};
+import {
+  MedicalServiceDataLayerMap,
+  ServiceType,
+  ApiCode
+} from "../ServiceMap/ServiceMapSlice";
 
 const filteredFields = [
   "address",
@@ -21,6 +16,26 @@ const filteredFields = [
   "specialty"
 ];
 
+const initialSearchOptions = {
+  threshold: 0.2,
+  location: 0,
+  distance: 100,
+  tokenize: true,
+  maxPatternLength: 16,
+  keys: filteredFields
+};
+
+type CurrentDisplayState = {
+  query: string;
+  searchOptions: typeof initialSearchOptions;
+  searchResults?: Partial<MedicalServiceDataLayerMap>;
+};
+
+let initialState: CurrentDisplayState = {
+  query: "",
+  searchOptions: initialSearchOptions
+};
+
 const searchGroupSlice = createSlice({
   name: "searchGroup",
   initialState,
@@ -28,23 +43,28 @@ const searchGroupSlice = createSlice({
     setQuery(state, action: PayloadAction<string>) {
       state.query = action.payload;
     },
-    // TODO: This needs to be typed
-    performQuery(state, action: PayloadAction<any[]>) {
+    performQuery(state, action: PayloadAction<MedicalServiceDataLayerMap>) {
       if (state.query.length < 3) {
-        state.searchResults = [];
+        state.searchResults = undefined;
         return;
       }
 
-      const searchOptions = {
-        threshold: 0.1,
-        location: 0,
-        distance: 100,
-        tokenize: true,
-        maxPatternLength: 16,
-        keys: filteredFields
-      };
-      const fuse = new Fuse(action.payload, searchOptions);
-      state.searchResults = fuse.search(state.query);
+      state.searchResults = Object.keys(action.payload).reduce(
+        (acc: Partial<MedicalServiceDataLayerMap>, serviceType) => {
+          const currentLayer = action.payload[serviceType as ServiceType];
+          const fuse = new Fuse(currentLayer.data, state.searchOptions);
+          const results = fuse.search(state.query);
+
+          return {
+            ...acc,
+            [serviceType]: {
+              data: results,
+              status: { code: ApiCode.OK }
+            }
+          };
+        },
+        {}
+      );
     }
   }
 });

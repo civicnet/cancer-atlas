@@ -2,10 +2,11 @@ import React from "react";
 import { makeStyles } from "@material-ui/core";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/rootReducer";
-import ServiceMap, { ServiceObject } from "../components/ServiceMap";
+import ServiceMap from "../components/ServiceMap";
 import Tooltip from "../components/Tooltip";
 import LayerPicker from "../components/LayerPicker";
 import Legend from "../components/Legend";
+import { MedicalServiceData } from "../components/ServiceMap/ServiceMapSlice";
 
 const useStyles = makeStyles(theme => ({
   tooltipContainer: {
@@ -42,11 +43,11 @@ const Atlas: React.FC = () => {
     (state: RootState) => state.layerPickerReducer
   );
 
-  const onServiceHover = (obj: ServiceObject) => {
+  const onServiceHover = (obj: MedicalServiceData) => {
     setTooltip(obj);
   };
 
-  const onServiceClick = (obj: ServiceObject) => {
+  const onServiceClick = (obj: MedicalServiceData) => {
     setPinnedTooltip(obj);
   };
 

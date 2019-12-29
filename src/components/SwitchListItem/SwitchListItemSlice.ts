@@ -1,10 +1,10 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { ServiceType } from '../ServiceMap';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { ServiceType } from "../ServiceMap/ServiceMapSlice";
 
 type SelectedServiceTypes = ServiceType[];
 type CurrentDisplayState = {
   services: SelectedServiceTypes;
-}
+};
 
 let initialState: CurrentDisplayState = {
   services: [
@@ -13,10 +13,10 @@ let initialState: CurrentDisplayState = {
     ServiceType.Imaging,
     ServiceType.Laboratory
   ]
-}
+};
 
 const switchListItemSlice = createSlice({
-  name: 'switchListItem',
+  name: "switchListItem",
   initialState,
   reducers: {
     toggleServiceType(state, action: PayloadAction<ServiceType>) {
@@ -30,12 +30,10 @@ const switchListItemSlice = createSlice({
       }
 
       state.services = newChecked;
-    },
+    }
   }
 });
 
-export const {
-  toggleServiceType,
-} = switchListItemSlice.actions;
+export const { toggleServiceType } = switchListItemSlice.actions;
 
 export default switchListItemSlice.reducer;
