@@ -1,4 +1,4 @@
-### Navigator α
+### Atlas / βeta
 
 Un proiect [CivicNet](https://civicnet.ro/) și [Asociația Sănătate pentru Comunitate](https://www.facebook.com/SanatatepentruComunitate).
 
@@ -14,9 +14,15 @@ Aplicația va conține informații importante despre traseul pacienților, de la
 	<br>
 	<br>
 	<br>
-  Made with :heart: and :coffee: by
+  <div>
+    Made with :heart: and :coffee: by
+  </div>
   <img src="https://civicnet.ro/CivicNet_Logo.svg" width="170px"/>
   <br>
 </div>
+
+<br>
+<br>
+<br>
 
 > Favicon made by [Freepik](https://www.flaticon.com/authors/freepik) from [www.flaticon.com](www.flaticon.com)
