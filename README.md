@@ -19,10 +19,11 @@ Aplicația va conține informații importante despre traseul pacienților, de la
   </div>
   <img src="https://civicnet.ro/CivicNet_Logo.svg" width="170px"/>
   <br>
-> Favicon made by [Freepik](https://www.flaticon.com/authors/freepik) from [www.flaticon.com](www.flaticon.com)
 </div>
 
 <br>
 <br>
 <br>
 
+
+> Favicon made by [Freepik](https://www.flaticon.com/authors/freepik) from [www.flaticon.com](www.flaticon.com)
