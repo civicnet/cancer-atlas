@@ -286,7 +286,11 @@ const App: React.FC<RouteComponentProps> = props => {
             href="https://civicnet.ro"
             style={{ display: "flex", flex: 1, justifyContent: "center" }}
           >
-            <img src="CivicNet_Logo.svg" style={{ height: 32 }} />
+            <img
+              src="CivicNet_Logo.svg"
+              style={{ height: 32 }}
+              alt="CivicNet Logo"
+            />
           </a>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === "rtl" ? (
