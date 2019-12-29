@@ -82,7 +82,7 @@ const Changelog: React.FC = () => {
     <Container>
       <IconButton
         component={Link}
-        to="/cancer-atlas"
+        to="/"
         style={{ position: "absolute", top: 4, right: 4, zIndex: 150 }}
       >
         <Icon className="far fa-times" style={{ fontSize: 16 }} />
