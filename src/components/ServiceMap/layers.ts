@@ -14,7 +14,15 @@ import {
   MedicalServiceData,
   ApiCode
 } from "./ServiceMapSlice";
+import { Left, Right, Either } from "../../lib/Either";
 
+export interface LayerTypeError {
+  msg: string;
+  layerType: LayerType;
+}
+
+const WipLayerErrorMsg =
+  "Tip de vizualizare in lucru, te rugam alege alt tip de vizualizare";
 export const getAggregateColorRange = () => [
   chroma("#5A1846").rgb(),
   chroma("#900C3F").rgb(),
@@ -28,7 +36,7 @@ export const getLayers = (
   data: Partial<MedicalServiceDataLayerMap>,
   shownServices: ServiceType[],
   props: LayerProps
-) => {
+): Either<LayerTypeError, any[]> => {
   const flatData = () =>
     Object.values(data).reduce((acc, layer) => {
       if (layer === undefined) {
@@ -44,32 +52,37 @@ export const getLayers = (
 
   switch (props.layerType) {
     case LayerType.Heatmap:
-      return [getHeatmap(flatData(), props)];
+      return Right<any[]>([getHeatmap(flatData(), props)]);
     case LayerType.Grid:
-      return [getGrid(flatData(), props)];
+      return Right<any[]>([getGrid(flatData(), props)]);
     case LayerType.Extruded:
-      return [];
+      return Left<LayerTypeError>({
+        msg: WipLayerErrorMsg,
+        layerType: LayerType.Extruded
+      });
     // return getExtruded(data, props);
     case LayerType.Icon:
-      return [getIcon(flatData(), props)];
+      return Right<any[]>([getIcon(flatData(), props)]);
     case LayerType.ScatterPlot:
     default:
-      return Object.keys(data)
-        .map(key => {
-          const serviceType = key as ServiceType;
-          const layer = data[serviceType];
-          if (layer === undefined) {
-            return null;
-          }
+      return Right<any[]>(
+        Object.keys(data)
+          .map(key => {
+            const serviceType = key as ServiceType;
+            const layer = data[serviceType];
+            if (layer === undefined) {
+              return null;
+            }
 
-          if (layer.status.code !== ApiCode.OK) {
-            return null;
-          }
+            if (layer.status.code !== ApiCode.OK) {
+              return null;
+            }
 
-          const isVisible = shownServices.includes(serviceType);
-          return getScatterplot(layer.data, serviceType, isVisible, props);
-        })
-        .filter(layer => layer !== null);
+            const isVisible = shownServices.includes(serviceType);
+            return getScatterplot(layer.data, serviceType, isVisible, props);
+          })
+          .filter(layer => layer !== null)
+      );
   }
 };
 

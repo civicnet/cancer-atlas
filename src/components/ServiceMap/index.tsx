@@ -18,6 +18,18 @@ import {
 } from "./ServiceMapSlice";
 import { streamJSON } from "../../api/API";
 import { noOpFunction } from "../../lib/defaults";
+import { isLeft, isRight } from "../../lib/Either";
+import {
+  Snackbar,
+  IconButton,
+  makeStyles,
+  Theme,
+  createStyles
+} from "@material-ui/core";
+import CloseIcon from "@material-ui/icons/Close";
+import { amber } from "@material-ui/core/colors";
+import clsx from "clsx";
+import InfoIcon from "@material-ui/icons/Info";
 
 export type ServiceTypeIndexed<T> = {
   [key in ServiceType]: T;
@@ -59,6 +71,22 @@ export interface LayerProps {
   layerType: LayerType;
 }
 
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    icon: {
+      fontSize: 20
+    },
+    iconVariant: {
+      opacity: 0.9,
+      marginRight: theme.spacing(1)
+    },
+    message: {
+      display: "flex",
+      alignItems: "center"
+    }
+  })
+);
+
 interface Props {
   services: ServiceType[];
 }
@@ -66,6 +94,20 @@ interface Props {
 const ServiceMap: React.FC<Props & LayerProps> = (
   props: Props & LayerProps
 ) => {
+  const classes = useStyles();
+  const [open, setOpen] = React.useState(true);
+
+  const handleClose = (
+    _: React.SyntheticEvent | React.MouseEvent,
+    reason?: string
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
+
   const dispatch = useDispatch();
   const { viewState, medicalServices, geoJsonData } = useSelector(
     (state: RootState) => state.serviceMapReducer
@@ -76,6 +118,10 @@ const ServiceMap: React.FC<Props & LayerProps> = (
   const { services } = useSelector(
     (state: RootState) => state.switchListItemReducer
   );
+
+  useEffect(() => {
+    setOpen(true);
+  }, [props.layerType]);
 
   useEffect(() => {
     if (geoJsonData.status.code !== ApiCode.Uninitialized) {
@@ -139,21 +185,63 @@ const ServiceMap: React.FC<Props & LayerProps> = (
   }); */
 
   const layers = getLayers(
-    props.layerType !== LayerType.Extruded ? displayedData : {}, // : geoJsonData.data,
+    props.layerType !== LayerType.Extruded ? displayedData : {},
     services,
     props
   );
 
-  return (
-    <DeckGL initialViewState={viewState} controller={true} layers={layers}>
-      <StaticMap
-        key="static_map"
-        width="100%"
-        height="100%"
-        mapStyle="mapbox://styles/claudiuc/ck4j3z14e09hg1dmkpijn2kma"
-        mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
+  let toast = null;
+  if (isLeft(layers)) {
+    toast = (
+      <Snackbar
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right"
+        }}
+        open={open}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        ContentProps={{
+          "aria-describedby": "message-id",
+          style: { background: amber[700] }
+        }}
+        message={
+          <span id="message-id" className={classes.message}>
+            <InfoIcon className={clsx(classes.icon, classes.iconVariant)} />
+            {layers.value.msg}
+          </span>
+        }
+        action={[
+          <IconButton
+            key="close"
+            aria-label="close"
+            color="inherit"
+            onClick={handleClose}
+          >
+            <CloseIcon className={classes.icon} />
+          </IconButton>
+        ]}
       />
-    </DeckGL>
+    );
+  }
+
+  return (
+    <>
+      {toast}
+      <DeckGL
+        initialViewState={viewState}
+        controller={true}
+        layers={isRight(layers) ? layers.value : []}
+      >
+        <StaticMap
+          key="static_map"
+          width="100%"
+          height="100%"
+          mapStyle="mapbox://styles/claudiuc/ck4j3z14e09hg1dmkpijn2kma"
+          mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
+        />
+      </DeckGL>
+    </>
   );
 };
 
