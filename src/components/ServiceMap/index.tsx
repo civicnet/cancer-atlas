@@ -7,7 +7,7 @@ import { LayerType } from "../LayerPicker/LayerPickerSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/rootReducer";
 import {
-  updateViewState,
+  // updateViewState,
   // fetchMedicalServicesBuildingData,
   ApiCode,
   receiveMedicalServiceDataLayer,
@@ -176,7 +176,7 @@ const ServiceMap: React.FC<Props & LayerProps> = (
   }, [dispatch]);
 
   // Custom pitch for 3D layers
-  useEffect(() => {
+  /* useEffect(() => {
     if (props.layerType === LayerType.Extruded) {
       dispatch(
         updateViewState({
@@ -190,7 +190,7 @@ const ServiceMap: React.FC<Props & LayerProps> = (
         })
       );
     }
-  }, [props.layerType, dispatch]);
+  }, [props.layerType, dispatch]); */
 
   if (!medicalServices[ServiceType.FamilyMedicine].data) {
     return null;
