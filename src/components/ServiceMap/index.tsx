@@ -244,7 +244,6 @@ const ServiceMap: React.FC<Props & LayerProps> = (
     );
   }
 
-  console.log(layers.value);
   return (
     <>
       {toast}

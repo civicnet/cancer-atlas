@@ -155,6 +155,7 @@ export const BivariateLegend: React.FC<Props> = props => {
         <div className={clsx(classes.horizontalLayer, classes.legendLayer)}>
           {choroplethColorRange.populationAxis.reverse().map(color => (
             <div
+              key={JSON.stringify(color)}
               className={classes.legendRow}
               style={{
                 backgroundColor: chroma(color).hex()
@@ -165,6 +166,7 @@ export const BivariateLegend: React.FC<Props> = props => {
         <div className={clsx(classes.verticalLayer, classes.legendLayer)}>
           {choroplethColorRange.medicalServicesAxis.map(color => (
             <div
+              key={JSON.stringify(color)}
               className={classes.legendColumn}
               style={{
                 backgroundColor: chroma(color).hex()
