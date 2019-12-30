@@ -8,15 +8,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/rootReducer";
 import {
   updateViewState,
-  fetchMedicalServicesBuildingData,
+  // fetchMedicalServicesBuildingData,
   ApiCode,
   receiveMedicalServiceDataLayer,
   setMedicalServiceDataLayerCode,
   MedicalServiceDataLayer,
   ServiceType,
-  MedicalServiceData
+  MedicalServiceData,
+  receiveUatGeoJson,
+  UatGeoJsonList,
+  receiveCountiesGeoJson
 } from "./ServiceMapSlice";
-import { streamJSON } from "../../api/API";
+import { streamJSON, streamGeoJSON, streamCountyBorders } from "../../api/API";
 import { noOpFunction } from "../../lib/defaults";
 import { isLeft, isRight } from "../../lib/Either";
 import {
@@ -110,9 +113,12 @@ const ServiceMap: React.FC<Props & LayerProps> = (
   };
 
   const dispatch = useDispatch();
-  const { viewState, medicalServices, geoJsonData } = useSelector(
-    (state: RootState) => state.serviceMapReducer
-  );
+  const {
+    viewState,
+    medicalServices,
+    /* geoJsonData, */ uatGeoJson,
+    countyGeoJson
+  } = useSelector((state: RootState) => state.serviceMapReducer);
   const { searchResults } = useSelector(
     (state: RootState) => state.searchGroupReducer
   );
@@ -120,11 +126,24 @@ const ServiceMap: React.FC<Props & LayerProps> = (
     (state: RootState) => state.switchListItemReducer
   );
 
+  // Load uats geojson
+  useEffect(() => {
+    const onDone = (data: UatGeoJsonList) => dispatch(receiveUatGeoJson(data));
+    streamGeoJSON("uats", onDone, msg => console.log(msg));
+  }, [dispatch]);
+
+  // Load counties geojson
+  useEffect(() => {
+    const onDone = (data: any) => dispatch(receiveCountiesGeoJson(data));
+    streamCountyBorders(onDone, msg => console.log(msg));
+  }, [dispatch]);
+
   useEffect(() => {
     setOpen(true);
   }, [props.layerType]);
 
-  useEffect(() => {
+  // Load buildings
+  /* useEffect(() => {
     if (geoJsonData.status.code !== ApiCode.Uninitialized) {
       return;
     }
@@ -139,8 +158,9 @@ const ServiceMap: React.FC<Props & LayerProps> = (
 
       dispatch(fetchMedicalServicesBuildingData(files));
     }
-  }, [props.layerType, geoJsonData.status.code, dispatch]);
+  }, [props.layerType, geoJsonData.status.code, dispatch]); */
 
+  // Load medical services
   useEffect(() => {
     const onDone = (service: ServiceType, layer: MedicalServiceDataLayer) =>
       dispatch(receiveMedicalServiceDataLayer({ service, layer }));
@@ -155,6 +175,7 @@ const ServiceMap: React.FC<Props & LayerProps> = (
     streamJSON(Object.values(ServiceType), onDone, noOpFunction, onFail);
   }, [dispatch]);
 
+  // Custom pitch for 3D layers
   useEffect(() => {
     if (props.layerType === LayerType.Extruded) {
       dispatch(
@@ -178,15 +199,12 @@ const ServiceMap: React.FC<Props & LayerProps> = (
   const displayedData =
     searchResults !== undefined ? searchResults : medicalServices;
 
-  /* displayedData = displayedData.filter(data => {
-    if (services.includes(data.type)) {
-      return true;
-    }
-    return false;
-  }); */
-
   const layers = getLayers(
-    props.layerType !== LayerType.Extruded ? displayedData : {},
+    {
+      medicalData: props.layerType !== LayerType.Extruded ? displayedData : {},
+      choroplethData: uatGeoJson,
+      countyBorders: countyGeoJson
+    },
     services,
     props
   );
@@ -226,6 +244,7 @@ const ServiceMap: React.FC<Props & LayerProps> = (
     );
   }
 
+  console.log(layers.value);
   return (
     <>
       {toast}
@@ -238,7 +257,11 @@ const ServiceMap: React.FC<Props & LayerProps> = (
           key="static_map"
           width="100%"
           height="100%"
-          mapStyle="mapbox://styles/claudiuc/ck4j3z14e09hg1dmkpijn2kma"
+          mapStyle={
+            props.layerType !== LayerType.Choropleth
+              ? "mapbox://styles/claudiuc/ck4j3z14e09hg1dmkpijn2kma/draft"
+              : "mapbox://styles/claudiuc/ck4rj1g758emo1do5slyr0i09/draft"
+          }
           mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
         />
       </DeckGL>

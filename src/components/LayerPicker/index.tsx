@@ -55,6 +55,11 @@ const LayerPicker: React.FC<Props> = props => {
     [LayerType.Extruded]: {
       icon: "fad fa-cube",
       title: "Vezi clădirile în care au puncte de lucru medicii de familie"
+    },
+    [LayerType.Choropleth]: {
+      icon: "fad fa-globe-europe",
+      title:
+        "Vei proportia dintre serviciile medicale si populatiile UAT-urilor"
     }
   };
 

@@ -2,7 +2,7 @@ import { LayerProps, ServiceTypeColorMap } from ".";
 import { ScatterplotLayer } from "@deck.gl/layers";
 import { HeatmapLayer } from "@deck.gl/aggregation-layers";
 import { ScreenGridLayer } from "@deck.gl/aggregation-layers";
-// import { GeoJsonLayer } from "@deck.gl/layers";
+import { GeoJsonLayer } from "@deck.gl/layers";
 
 import chroma from "chroma-js";
 
@@ -12,7 +12,10 @@ import {
   ServiceType,
   MedicalServiceDataLayerMap,
   MedicalServiceData,
-  ApiCode
+  ApiCode,
+  UatGeoJsonList,
+  UatGeoJson,
+  CountyGeoJsonList
 } from "./ServiceMapSlice";
 import { Left, Right, Either } from "../../lib/Either";
 
@@ -23,7 +26,8 @@ export interface LayerTypeError {
 
 const WipLayerErrorMsg =
   "Tip de vizualizare in lucru, te rugam alege alt tip de vizualizare";
-export const getAggregateColorRange = () => [
+
+export const aggregateColorRange = [
   chroma("#5A1846").rgb(),
   chroma("#900C3F").rgb(),
   chroma("#C70039").rgb(),
@@ -32,13 +36,31 @@ export const getAggregateColorRange = () => [
   chroma("#FFC300").rgb()
 ];
 
+export const choroplethColorRange = {
+  populationAxis: [
+    chroma("#f4cfd3").rgb(),
+    chroma("#e48791").rgb(),
+    chroma("#d44050").rgb()
+  ],
+  medicalServicesAxis: [
+    chroma("#d2e8f9").rgb(),
+    chroma("#8ec5f1").rgb(),
+    chroma("#4ba3e9").rgb()
+  ]
+};
+
 export const getLayers = (
-  data: Partial<MedicalServiceDataLayerMap>,
+  data: {
+    medicalData: Partial<MedicalServiceDataLayerMap>;
+    choroplethData: UatGeoJsonList;
+    countyBorders: CountyGeoJsonList;
+  },
   shownServices: ServiceType[],
   props: LayerProps
 ): Either<LayerTypeError, any[]> => {
+  const medicalData = data.medicalData;
   const flatData = () =>
-    Object.values(data).reduce((acc, layer) => {
+    Object.values(medicalData).reduce((acc, layer) => {
       if (layer === undefined) {
         return acc;
       }
@@ -63,13 +85,25 @@ export const getLayers = (
     // return getExtruded(data, props);
     case LayerType.Icon:
       return Right<any[]>([getIcon(flatData(), props)]);
-    case LayerType.ScatterPlot:
-    default:
+    case LayerType.Choropleth:
       return Right<any[]>(
-        Object.keys(data)
+        getChoropleth(
+          {
+            medicalData: flatData(),
+            choroplethData: data.choroplethData,
+            countyBorders: data.countyBorders
+          },
+          props
+        )
+      );
+    case LayerType.ScatterPlot:
+    default: {
+      const medicalData = data.medicalData;
+      return Right<any[]>(
+        Object.keys(medicalData)
           .map(key => {
             const serviceType = key as ServiceType;
-            const layer = data[serviceType];
+            const layer = medicalData[serviceType];
             if (layer === undefined) {
               return null;
             }
@@ -83,6 +117,7 @@ export const getLayers = (
           })
           .filter(layer => layer !== null)
       );
+    }
   }
 };
 
@@ -116,11 +151,11 @@ const getScatterplot = (
   });
 };
 
-const getIcon = (pointData: any, props: LayerProps) => {
+const getIcon = (pointData: MedicalServiceData[], props: LayerProps) => {
   return new IconClusterLayer({
     id: "IconLayer",
     data: pointData,
-    getPosition: (d: any) => [d.lng, d.lat],
+    getPosition: (d: MedicalServiceData) => [d.lng, d.lat],
     iconMapping: "data/location-icon-mapping.json",
     iconAtlas: "data/location-icon-atlas.png",
     sizeScale: 30,
@@ -131,30 +166,79 @@ const getIcon = (pointData: any, props: LayerProps) => {
   });
 };
 
-const getHeatmap = (pointData: any, props: LayerProps) => {
+const getHeatmap = (pointData: MedicalServiceData[], props: LayerProps) => {
   return new HeatmapLayer({
     id: "HeatmapLayer",
     data: pointData,
-    colorRange: getAggregateColorRange(),
+    colorRange: aggregateColorRange,
     opacity: 0.75,
-    getPosition: (d: any) => [d.lng, d.lat],
+    getPosition: (d: MedicalServiceData) => [d.lng, d.lat],
     radiusPixels: 80,
     intensity: 1
   });
 };
 
-const getGrid = (pointData: any, props: LayerProps) => {
+const getGrid = (pointData: MedicalServiceData[], props: LayerProps) => {
   return new ScreenGridLayer({
     id: "ScreenGridLayer",
     data: pointData,
-    colorRange: getAggregateColorRange(),
+    colorRange: aggregateColorRange,
     cellSizePixels: 15,
     aggregation: "SUM",
     coverage: 0.9,
     opacity: 0.7,
     colorScaleType: "quantile",
-    getPosition: (d: any) => [d.lng, d.lat]
+    getPosition: (d: MedicalServiceData) => [d.lng, d.lat]
   });
+};
+
+const getChoropleth = (
+  data: {
+    medicalData: MedicalServiceData[];
+    choroplethData: UatGeoJsonList;
+    countyBorders: CountyGeoJsonList;
+  },
+  props: LayerProps
+) => {
+  return [
+    new GeoJsonLayer({
+      id: "GeoJsonLayer-Bivariate",
+      data: data.choroplethData,
+      pickable: false,
+      extruded: false,
+      stroked: true,
+      filled: true,
+      lineWidthMinPixels: 0.2,
+      getLineColor: [255, 255, 255, 200],
+      getPolygon: (d: any) => ({
+        type: "FeatureCollection",
+        features: [d]
+      }),
+      getFillColor: (d: UatGeoJson) => {
+        /* if (d.properties.color === "#c9bcce") {
+          return [...chroma(d.properties.color).rgb(), 200];
+        } */
+
+        return chroma(d.properties.color).rgb();
+      },
+      getLineWidth: 1
+    }),
+    new GeoJsonLayer({
+      id: "GeoJsonLayer-CountyBorders",
+      data: data.countyBorders,
+      pickable: false,
+      extruded: false,
+      stroked: true,
+      filled: false,
+      lineWidthMinPixels: 1,
+      getLineColor: [255, 255, 255],
+      getPolygon: (d: any) => ({
+        type: "FeatureCollection",
+        features: [d]
+      }),
+      getLineWidth: 1
+    })
+  ];
 };
 
 /* const getExtruded = (pointData: any, props: LayerProps) => {

@@ -42,6 +42,41 @@ type ApiError = {
 
 type ApiStatus = ApiOK | ApiError | ApiUninitialized;
 
+type LatLngPair = [number, number];
+
+export interface Geometry {
+  type: string;
+  coordinates: LatLngPair[];
+}
+
+export interface UatProperties {
+  natcode: string;
+  name: string;
+  countyCode: number;
+  county: string;
+  pop2015: number;
+  color: string;
+}
+
+export interface CountyProperties {
+  name: string;
+}
+
+export interface UatGeoJson {
+  type: string;
+  geometry: Geometry;
+  properties: UatProperties;
+}
+
+export interface CountyGeoJson {
+  type: string;
+  geometry: Geometry;
+  properties: CountyProperties;
+}
+
+export type UatGeoJsonList = UatGeoJson[];
+export type CountyGeoJsonList = CountyGeoJson[];
+
 export interface MedicalServiceData {
   address: string;
   contractNo: string;
@@ -74,6 +109,8 @@ type CurrentDisplayState = {
   viewState: ViewState;
   medicalServices: MedicalServiceDataLayerMap;
   geoJsonData: GeoJsonData;
+  uatGeoJson: UatGeoJsonList;
+  countyGeoJson: CountyGeoJsonList;
 };
 
 const initialDataStatus: ApiStatus = {
@@ -111,7 +148,9 @@ let initialState: CurrentDisplayState = {
   geoJsonData: {
     data: [],
     status: initialDataStatus
-  }
+  },
+  uatGeoJson: [],
+  countyGeoJson: []
 };
 
 const serviceMapSlice = createSlice({
@@ -148,6 +187,12 @@ const serviceMapSlice = createSlice({
         }
       };
     },
+    receiveUatGeoJson(state, action: PayloadAction<UatGeoJsonList>) {
+      state.uatGeoJson = action.payload;
+    },
+    receiveCountiesGeoJson(state, action: PayloadAction<CountyGeoJsonList>) {
+      state.countyGeoJson = action.payload;
+    },
     receiveMedicalServicesGeoJsonDataSuccess(
       state,
       action: PayloadAction<any[]>
@@ -174,7 +219,9 @@ export const {
   receiveMedicalServicesGeoJsonDataSuccess,
   receiveMedicalServicesGeoJsonDataFailed,
   receiveMedicalServiceDataLayer,
-  setMedicalServiceDataLayerCode
+  setMedicalServiceDataLayerCode,
+  receiveUatGeoJson,
+  receiveCountiesGeoJson
 } = serviceMapSlice.actions;
 
 export default serviceMapSlice.reducer;
