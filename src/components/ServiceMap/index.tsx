@@ -259,8 +259,8 @@ const ServiceMap: React.FC<Props & LayerProps> = (
           height="100%"
           mapStyle={
             props.layerType !== LayerType.Choropleth
-              ? "mapbox://styles/claudiuc/ck4j3z14e09hg1dmkpijn2kma/draft"
-              : "mapbox://styles/claudiuc/ck4rj1g758emo1do5slyr0i09/draft"
+              ? "mapbox://styles/claudiuc/ck4j3z14e09hg1dmkpijn2kma"
+              : "mapbox://styles/claudiuc/ck4rj1g758emo1do5slyr0i09"
           }
           mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
         />
