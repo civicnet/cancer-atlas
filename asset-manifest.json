@@ -1,22 +1,22 @@
 {
   "files": {
     "main.css": "/cancer-atlas/static/css/main.5ecd60fb.chunk.css",
-    "main.js": "/cancer-atlas/static/js/main.d13e855d.chunk.js",
-    "main.js.map": "/cancer-atlas/static/js/main.d13e855d.chunk.js.map",
+    "main.js": "/cancer-atlas/static/js/main.2d2732fd.chunk.js",
+    "main.js.map": "/cancer-atlas/static/js/main.2d2732fd.chunk.js.map",
     "runtime-main.js": "/cancer-atlas/static/js/runtime-main.fb56d565.js",
     "runtime-main.js.map": "/cancer-atlas/static/js/runtime-main.fb56d565.js.map",
-    "static/js/2.57db4c1e.chunk.js": "/cancer-atlas/static/js/2.57db4c1e.chunk.js",
-    "static/js/2.57db4c1e.chunk.js.map": "/cancer-atlas/static/js/2.57db4c1e.chunk.js.map",
+    "static/js/2.4b75e7ef.chunk.js": "/cancer-atlas/static/js/2.4b75e7ef.chunk.js",
+    "static/js/2.4b75e7ef.chunk.js.map": "/cancer-atlas/static/js/2.4b75e7ef.chunk.js.map",
     "index.html": "/cancer-atlas/index.html",
-    "precache-manifest.f936db479342b7863e123b94b8bcac4b.js": "/cancer-atlas/precache-manifest.f936db479342b7863e123b94b8bcac4b.js",
+    "precache-manifest.7d0c173c9186e9dbca5ccdb039944897.js": "/cancer-atlas/precache-manifest.7d0c173c9186e9dbca5ccdb039944897.js",
     "service-worker.js": "/cancer-atlas/service-worker.js",
     "static/css/main.5ecd60fb.chunk.css.map": "/cancer-atlas/static/css/main.5ecd60fb.chunk.css.map",
-    "static/js/2.57db4c1e.chunk.js.LICENSE": "/cancer-atlas/static/js/2.57db4c1e.chunk.js.LICENSE"
+    "static/js/2.4b75e7ef.chunk.js.LICENSE": "/cancer-atlas/static/js/2.4b75e7ef.chunk.js.LICENSE"
   },
   "entrypoints": [
     "static/js/runtime-main.fb56d565.js",
-    "static/js/2.57db4c1e.chunk.js",
+    "static/js/2.4b75e7ef.chunk.js",
     "static/css/main.5ecd60fb.chunk.css",
-    "static/js/main.d13e855d.chunk.js"
+    "static/js/main.2d2732fd.chunk.js"
   ]
 }
