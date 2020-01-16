@@ -14,7 +14,7 @@ type CurrentDisplayState = {
 };
 
 let initialState: CurrentDisplayState = {
-  layerType: LayerType.Choropleth
+  layerType: LayerType.ScatterPlot
 };
 
 const layerPickerSlice = createSlice({

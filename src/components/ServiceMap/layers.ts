@@ -1,8 +1,8 @@
 import { LayerProps, ServiceTypeColorMap } from ".";
 import { ScatterplotLayer } from "@deck.gl/layers";
 import { HeatmapLayer } from "@deck.gl/aggregation-layers";
-import { ScreenGridLayer } from "@deck.gl/aggregation-layers";
-import { GeoJsonLayer } from "@deck.gl/layers";
+import { /* ScreenGridLayer, */ GridLayer } from "@deck.gl/aggregation-layers";
+import { GeoJsonLayer /*, GridCellLayer */ } from "@deck.gl/layers";
 
 import chroma from "chroma-js";
 
@@ -35,6 +35,12 @@ export const aggregateColorRange = [
   chroma("#F1920E").rgb(),
   chroma("#FFC300").rgb()
 ];
+
+const deckColorRange = aggregateColorRange.map(color => [
+  color[0],
+  color[1],
+  color[2]
+]);
 
 export const choroplethColorRange = {
   populationAxis: [
@@ -170,7 +176,7 @@ const getHeatmap = (pointData: MedicalServiceData[], props: LayerProps) => {
   return new HeatmapLayer({
     id: "HeatmapLayer",
     data: pointData,
-    colorRange: aggregateColorRange,
+    colorRange: deckColorRange,
     opacity: 0.75,
     getPosition: (d: MedicalServiceData) => [d.lng, d.lat],
     radiusPixels: 80,
@@ -179,16 +185,24 @@ const getHeatmap = (pointData: MedicalServiceData[], props: LayerProps) => {
 };
 
 const getGrid = (pointData: MedicalServiceData[], props: LayerProps) => {
-  return new ScreenGridLayer({
+  console.log("here", pointData);
+  return new GridLayer({
     id: "ScreenGridLayer",
+    //pickable: false,
     data: pointData,
-    colorRange: aggregateColorRange,
-    cellSizePixels: 15,
-    aggregation: "SUM",
-    coverage: 0.9,
+    colorRange: deckColorRange,
+    cellSize: 5000,
+    // extruded: true,
+    // colorScaleType: "quantize",
+    // upperPercentile: 95,
+    //cellSizePixels: 50,
+    // aggregation: "SUM",
+    coverage: 0.7,
     opacity: 0.7,
-    colorScaleType: "quantile",
+    // colorScaleType: "quantile",
     getPosition: (d: MedicalServiceData) => [d.lng, d.lat]
+    //getWeight: 1,
+    //gpuAggregation: true,
   });
 };
 
